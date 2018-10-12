@@ -3,8 +3,8 @@
 The ultimate DNS changer tool that you will ever need!  
 Find the fastest DNS servers and apply them in just few mouse clicks!
 
-![](https://i.imgur.com/Xac5wgn.png)
-![](https://i.imgur.com/4eRuhhn.png)
+![](https://i.imgur.com/NfxQ1u2.png)
+![](https://i.imgur.com/SqWfles.png)
 
 Have you ever wondered how much time you can save just by changing the DNS servers? Let's say that you can save ~30ms per request. You typically send around 2000 of them per day.
 
