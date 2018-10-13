@@ -14,22 +14,6 @@ namespace DNSChanger
         [STAThread]
         public static void Main(string[] args)
         {
-            if (!IsAdministrator())
-            {
-                var proc = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = Process.GetCurrentProcess().MainModule.FileName,
-                        UseShellExecute = true,
-                        Verb = "runas",
-                    },
-                };
-
-                proc.Start();
-                return;
-            }
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -44,13 +28,6 @@ namespace DNSChanger
             }
 
             Application.Run(new MainForm());
-        }
-
-        public static bool IsAdministrator()
-        {
-            var identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }
