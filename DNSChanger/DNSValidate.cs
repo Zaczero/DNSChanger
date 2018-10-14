@@ -114,7 +114,10 @@ namespace DNSChanger
 
         public static void Disable()
         {
-            RegistryKey.DeleteValue(GlobalVars.Name);
+            if (Get() != null)
+            {
+                RegistryKey.DeleteValue(GlobalVars.Name);
+            }
         }
 
         private static string AggregateDnsEntries(Interface @interface)
