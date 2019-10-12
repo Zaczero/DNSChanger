@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("DNSChanger")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Zaczero (Kamil Monicz)")]
+[assembly: AssemblyCompany("Kamil Monicz")]
 [assembly: AssemblyProduct("DNSChanger")]
-[assembly: AssemblyCopyright("Copyright © 2018 Zaczero (Kamil Monicz)")]
+[assembly: AssemblyCopyright("Copyright © 2019 Kamil Monicz")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
