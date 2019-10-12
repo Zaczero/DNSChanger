@@ -5,9 +5,8 @@ namespace DNSChanger
     public static class GlobalVars
     {
         public static string Name = "DNSChanger";
-        public static string Author = "Zaczero";
 
-        public static DNSServerEntry[] DnsServers = new []
+        public static DNSServerEntry[] DnsServers =
         {
             new DNSServerEntry
             {
@@ -43,6 +42,18 @@ namespace DNSChanger
                     new DNSEntry("2620:0:ccc::2"),
                     new DNSEntry("2620:0:ccd::2"), 
                 },
+            },
+
+            new DNSServerEntry
+            {
+	            Name = "AdGuard",
+	            DnsEntries = new []
+	            {
+		            new DNSEntry("176.103.130.130"),
+		            new DNSEntry("176.103.130.131"),
+		            new DNSEntry("2a00:5a60::ad1:0ff"),
+		            new DNSEntry("2a00:5a60::ad2:0ff"), 
+	            },
             },
         };
     }
