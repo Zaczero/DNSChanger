@@ -12,7 +12,7 @@ namespace DNSChanger
         public InterfaceSelectionForm()
         {
             InitializeComponent();
-            Text = GlobalVars.Name + " Interface Selector";
+            Text = GlobalVars.Name + @" Interface Selector";
             Icon = Properties.Resources.Icon;
 
 

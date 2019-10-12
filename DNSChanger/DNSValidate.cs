@@ -1,5 +1,5 @@
 ﻿using DNSChanger.Structs;
-using Microsoft.Win32;
+using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -7,22 +7,12 @@ using System.Text.RegularExpressions;
 
 namespace DNSChanger
 {
-    public static class DNSValidate
+	public static class DNSValidate
     {
-        private static readonly RegistryKey RegistryKey;
+	    private const string TaskPath = "DNSChanger-ValidationTask";
 
         static DNSValidate()
         {
-            if (Environment.Is64BitOperatingSystem)
-            {
-                RegistryKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Run", true);
-            }
-                
-            if(RegistryKey == null)
-            {
-                RegistryKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-            }
-
             if (!VerifyProcessPath())
             {
                 var @interface = GetInterfaceToValidate();
@@ -57,26 +47,29 @@ namespace DNSChanger
             return true;
         }
         
-        private static string Get()
+        private static Task Get()
         {
-            return (string) RegistryKey.GetValue(GlobalVars.Name);
+	        return TaskService.Instance.GetTask(TaskPath);
         }
 
         private static bool VerifyProcessPath()
         {
-            var val = Get();
-            if (val == null) return true;
+            var tsk = Get();
+            if (tsk == null) return true;
 
-            var path = Process.GetCurrentProcess().MainModule.FileName;
-            return val.StartsWith($"\"{path}\"");
+            var action = (ExecAction) tsk.Definition.Actions[0];
+
+            return action.Path == Process.GetCurrentProcess().MainModule.FileName;
         }
 
         public static Interface? GetInterfaceToValidate()
         {
-            var val = Get();
-            if (val == null) return null;
+            var tsk = Get();
+            if (tsk == null) return null;
+			
+            var action = (ExecAction) tsk.Definition.Actions[0];
 
-            var match = Regex.Match(val, @"-validate ""(?<Interface>.+?)""");
+            var match = Regex.Match(action.Arguments, @"-validate ""(?<Interface>.+?)""");
             if (!match.Success) return null;
 
             return NameToInterface(match.Groups["Interface"].Value);
@@ -84,10 +77,12 @@ namespace DNSChanger
 
         public static string GetDnsEntriesToValidate()
         {
-            var val = Get();
-            if (val == null) return null;
+            var tsk = Get();
+            if (tsk == null) return null;
+			
+            var action = (ExecAction) tsk.Definition.Actions[0];
 
-            var match = Regex.Match(val, @"-validate ""(?<Interface>.+?)"" ""(?<Entries>.+?)""");
+            var match = Regex.Match(action.Arguments, @"-validate ""(?<Interface>.+?)"" ""(?<Entries>.+?)""");
             if (!match.Success) return null;
 
             return match.Groups["Entries"].Value;
@@ -109,15 +104,22 @@ namespace DNSChanger
 
         public static void Enable(Interface @interface)
         {
-            RegistryKey.SetValue(GlobalVars.Name, $"\"{Process.GetCurrentProcess().MainModule.FileName}\" -validate \"{@interface.Name}\" \"{AggregateDnsEntries(@interface)}\"");
+			Disable();
+
+	        var ts = TaskService.Instance;
+
+	        var task = ts.NewTask();
+	        task.Principal.RunLevel = TaskRunLevel.Highest;
+	        task.RegistrationInfo.Description = "Performs DNS validation procedure on boot";
+	        task.Triggers.Add(new BootTrigger());
+	        task.Actions.Add(Process.GetCurrentProcess().MainModule.FileName, $"-validate \"{@interface.Name}\" \"{AggregateDnsEntries(@interface)}\"");
+	        
+	        ts.RootFolder.RegisterTaskDefinition(TaskPath, task);
         }
 
         public static void Disable()
         {
-            if (Get() != null)
-            {
-                RegistryKey.DeleteValue(GlobalVars.Name);
-            }
+	        TaskService.Instance.RootFolder.DeleteTask(TaskPath, false);
         }
 
         private static string AggregateDnsEntries(Interface @interface)

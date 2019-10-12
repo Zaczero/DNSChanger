@@ -12,7 +12,7 @@ namespace DNSChanger
         public DNSChangeDetectedForm()
         {
             InitializeComponent();
-            Text = GlobalVars.Name + " DNS Change Detected";
+            Text = GlobalVars.Name + @" DNS Change Detected";
             Icon = Properties.Resources.Icon;
 
 
@@ -33,7 +33,7 @@ namespace DNSChanger
             NetshHelper.UpdateDnsEntries(@interface, dnsEntries);
             NetshHelper.FlushDns();
 
-            MessageBox.Show("DNS settings applied!", GlobalVars.Name, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(@"DNS settings applied!", GlobalVars.Name, MessageBoxButtons.OK, MessageBoxIcon.Information);
             Close();
         }
 
