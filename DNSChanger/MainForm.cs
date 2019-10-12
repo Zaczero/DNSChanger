@@ -255,22 +255,25 @@ namespace DNSChanger
             var v6primary = this.v6primary.Text.Trim();
             var v6secondary = this.v6secondary.Text.Trim();
 
-            if (!string.IsNullOrEmpty(v4primary) && Regex.IsMatch(v4primary, @"^(\d+?[\.]?){4}$"))
+            var ipv4regex = new Regex(@"^(\d+?[\.]?){4}$");
+            var ipv6regex = new Regex(@"^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$");
+
+            if (!string.IsNullOrEmpty(v4primary) && ipv4regex.IsMatch(v4primary))
             {
                 dnsEntries.Add(new DNSEntry(v4primary));
             }
 
-            if (!string.IsNullOrEmpty(v4secondary) && Regex.IsMatch(v4secondary, @"^(\d+?[\.]?){4}$"))
+            if (!string.IsNullOrEmpty(v4secondary) && ipv4regex.IsMatch(v4secondary))
             {
                 dnsEntries.Add(new DNSEntry(v4secondary));
             }
 
-            if (!string.IsNullOrEmpty(v6primary) && Regex.IsMatch(v6primary, @"^([0-9a-f]{0,4}:){1,7}[0-9a-f]{0,4}$", RegexOptions.IgnoreCase))
+            if (!string.IsNullOrEmpty(v6primary) && ipv6regex.IsMatch(v6primary))
             {
                 dnsEntries.Add(new DNSEntry(v6primary));
             }
 
-            if (!string.IsNullOrEmpty(v6secondary) && Regex.IsMatch(v6secondary, @"^([0-9a-f]{0,4}:){1,7}[0-9a-f]{0,4}$", RegexOptions.IgnoreCase))
+            if (!string.IsNullOrEmpty(v6secondary) && ipv6regex.IsMatch(v6secondary))
             {
                 dnsEntries.Add(new DNSEntry(v6secondary));
             }
@@ -323,7 +326,12 @@ namespace DNSChanger
                 var interSelectForm = new InterfaceSelectionForm();
                 interSelectForm.ShowDialog(this);
 
-                if (!interSelectForm.Success) return;
+                if (!interSelectForm.Success)
+                {
+	                validateCb.Checked = false;
+					return;
+                }
+
                 var @interface = interSelectForm.SelectedInterface;
 
                 _interfaceToValidate = @interface;
