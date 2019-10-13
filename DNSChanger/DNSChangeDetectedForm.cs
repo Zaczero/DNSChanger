@@ -43,9 +43,9 @@ namespace DNSChanger
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = Process.GetCurrentProcess().MainModule.FileName,
+                    FileName = Utilities.GetProcessPath(),
+                    UseShellExecute = true,
                     Verb = "runas",
-                    UseShellExecute = false,
                 },
             };
 

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Principal;
 using System.Windows.Forms;
 
 namespace DNSChanger
@@ -9,6 +11,22 @@ namespace DNSChanger
         [STAThread]
         public static void Main(string[] args)
         {
+	        if (!Utilities.IsAdministrator())
+	        {
+		        var proc = new Process
+		        {
+			        StartInfo = new ProcessStartInfo
+			        {
+				        FileName = Utilities.GetProcessPath(),
+				        UseShellExecute = true,
+				        Verb = "runas",
+			        },
+		        };
+
+		        proc.Start();
+				return;
+	        }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

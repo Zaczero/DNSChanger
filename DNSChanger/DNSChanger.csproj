@@ -94,6 +94,7 @@
     <Compile Include="Structs\DNSEntry.cs" />
     <Compile Include="Structs\DNSServerEntry.cs" />
     <Compile Include="Structs\Interface.cs" />
+    <Compile Include="Utilities.cs" />
     <EmbeddedResource Include="DNSChangeDetectedForm.resx">
       <DependentUpon>DNSChangeDetectedForm.cs</DependentUpon>
     </EmbeddedResource>

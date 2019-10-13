@@ -1,7 +1,6 @@
 ﻿using DNSChanger.Structs;
 using Microsoft.Win32.TaskScheduler;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -9,11 +8,11 @@ namespace DNSChanger
 {
 	public static class DNSValidate
     {
-	    private const string TaskPath = "DNSChanger-ValidationTask";
+	    private static readonly string TaskPath = GlobalVars.Name + "-ValidationTask";
 
         static DNSValidate()
         {
-            if (!VerifyProcessPath())
+            if (!ValidateAutoStartProcessPath())
             {
                 var @interface = GetInterfaceToValidate();
                 if (@interface.HasValue)
@@ -52,14 +51,14 @@ namespace DNSChanger
 	        return TaskService.Instance.GetTask(TaskPath);
         }
 
-        private static bool VerifyProcessPath()
+        private static bool ValidateAutoStartProcessPath()
         {
             var tsk = Get();
             if (tsk == null) return true;
 
             var action = (ExecAction) tsk.Definition.Actions[0];
 
-            return action.Path == Process.GetCurrentProcess().MainModule.FileName;
+            return action.Path == Utilities.GetProcessPath();
         }
 
         public static Interface? GetInterfaceToValidate()
@@ -111,8 +110,9 @@ namespace DNSChanger
 	        var task = ts.NewTask();
 	        task.Principal.RunLevel = TaskRunLevel.Highest;
 	        task.RegistrationInfo.Description = "Performs DNS validation procedure on boot";
+	        task.RegistrationInfo.Author = GlobalVars.Name;
 	        task.Triggers.Add(new BootTrigger());
-	        task.Actions.Add(Process.GetCurrentProcess().MainModule.FileName, $"-validate \"{@interface.Name}\" \"{AggregateDnsEntries(@interface)}\"");
+	        task.Actions.Add(Utilities.GetProcessPath(), $"-validate \"{@interface.Name}\" \"{AggregateDnsEntries(@interface)}\"");
 	        
 	        ts.RootFolder.RegisterTaskDefinition(TaskPath, task);
         }
