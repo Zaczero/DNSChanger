@@ -18,6 +18,7 @@ namespace DNSChanger
 			        StartInfo = new ProcessStartInfo
 			        {
 				        FileName = Utilities.GetProcessPath(),
+						Arguments = Process.GetCurrentProcess().GetCommandLine(),
 				        UseShellExecute = true,
 				        Verb = "runas",
 			        },
