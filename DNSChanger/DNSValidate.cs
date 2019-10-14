@@ -111,7 +111,13 @@ namespace DNSChanger
 	        task.Principal.RunLevel = TaskRunLevel.Highest;
 	        task.RegistrationInfo.Description = "Performs DNS validation procedure on boot";
 	        task.RegistrationInfo.Author = GlobalVars.Name;
-	        task.Triggers.Add(new BootTrigger());
+	        task.Triggers.Add(new LogonTrigger
+	        {
+		        Delay = TimeSpan.FromMinutes(1),
+				Repetition = new RepetitionPattern(TimeSpan.FromHours(12), TimeSpan.Zero),
+				ExecutionTimeLimit = TimeSpan.FromMinutes(1),
+				UserId = null,
+	        });
 	        task.Actions.Add(Utilities.GetProcessPath(), $"-validate \"{@interface.Name}\" \"{AggregateDnsEntries(@interface)}\"");
 	        
 	        ts.RootFolder.RegisterTaskDefinition(TaskPath, task);
