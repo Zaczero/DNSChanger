@@ -24,7 +24,12 @@ namespace DNSChanger
 			        },
 		        };
 
-		        proc.Start();
+		        try
+		        {
+			        proc.Start();
+		        }
+				catch (Exception ex)
+				{ }
 				return;
 	        }
 
