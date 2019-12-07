@@ -2,22 +2,30 @@
 
 namespace DNSChanger.Structs
 {
-    public struct DNSServerEntry
+    public class DNSServerEntry
     {
         public string Name;
-        public float Latency;
+        public float Latency = -1f;
         public DNSEntry[] DnsEntries;
 
         public override string ToString()
         {
-            if (Latency == 0f)
+            if (Latency == -1f)
             {
                 return $"{Name}";
             }
-            else
+
+            if (Latency <= 1f)
             {
-                return $"{Name} (~{Math.Round(Latency, 1)}ms)";
+	            return $"{Name} ( <1 ms )";
             }
+
+            if (Latency == float.MaxValue)
+            {
+	            return $"{Name} ( Timeout )";
+            }
+
+            return $"{Name} ( {Math.Round(Latency, 1)} ms )";
         }
     }
 }

@@ -17,11 +17,12 @@ namespace DNSChanger
                 {
                     var results = new int[pings];
                     var address = dnsServers[j].DnsEntries.First().Value;
+                    var success = true;
 
                     for (var i = 0; i < pings; i++)
                     {
                         var ping = new Ping();
-                        var pong = ping.Send(address, 5 * 1000);
+                        var pong = ping.Send(address, 1000);
 
                         if (pong != null && pong.Status == IPStatus.Success)
                         {
@@ -29,29 +30,34 @@ namespace DNSChanger
                         }
                         else
                         {
+	                        success = false;
                             break;
                         }
                     }
 
-                    // ping failed
-                    if (results.Any(r => r == 0)) continue;
-
-                    var max = results.Max();
-                    var maxRemoved = false;
-                    var totalMs = 0;
-
-                    foreach (var result in results)
+                    if (success)
                     {
-                        if (!maxRemoved && result == max)
-                        {
-                            maxRemoved = true;
-                            continue;
-                        }
+	                    var max = results.Max();
+	                    var maxRemoved = false;
+	                    var totalMs = 0;
 
-                        totalMs += result;
+	                    foreach (var result in results)
+	                    {
+		                    if (!maxRemoved && result == max)
+		                    {
+			                    maxRemoved = true;
+			                    continue;
+		                    }
+
+		                    totalMs += result;
+	                    }
+
+	                    dnsServers[j].Latency = (float) totalMs / pings;
                     }
-
-                    dnsServers[j].Latency = (float) totalMs / pings;
+                    else
+                    {
+	                    dnsServers[j].Latency = float.MaxValue;
+                    }
                 }
                 catch
                 { }
