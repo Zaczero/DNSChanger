@@ -7,46 +7,46 @@ using System.Windows.Forms;
 namespace DNSChanger
 {
 	public static class Program
-    {
-        [STAThread]
-        public static void Main(string[] args)
-        {
-	        if (!Utilities.IsAdministrator())
-	        {
-		        var proc = new Process
-		        {
-			        StartInfo = new ProcessStartInfo
-			        {
-				        FileName = Utilities.GetProcessPath(),
+	{
+		[STAThread]
+		public static void Main(string[] args)
+		{
+			if (!Utilities.IsAdministrator())
+			{
+				var proc = new Process
+				{
+					StartInfo = new ProcessStartInfo
+					{
+						FileName = Utilities.GetProcessPath(),
 						Arguments = Process.GetCurrentProcess().GetCommandLine(),
-				        UseShellExecute = true,
-				        Verb = "runas",
-			        },
-		        };
+						UseShellExecute = true,
+						Verb = "runas",
+					},
+				};
 
-		        try
-		        {
-			        proc.Start();
-		        }
+				try
+				{
+					proc.Start();
+				}
 				catch (Exception ex)
 				{ }
 				return;
-	        }
+			}
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
 
-            if (!DNSValidate.ProcessArgs(args))
-            {
-                Application.Run(new DNSChangeDetectedForm());
-            }
+			if (!DNSValidate.ProcessArgs(args))
+			{
+				Application.Run(new DNSChangeDetectedForm());
+			}
 
-            if (args.Contains("-validate"))
-            {
-                return;
-            }
+			if (args.Contains("-validate"))
+			{
+				return;
+			}
 
-            Application.Run(new MainForm());
-        }
-    }
+			Application.Run(new MainForm());
+		}
+	}
 }
