@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -14,6 +15,30 @@ namespace DNSChanger
 			InitializeComponent();
 			Text = GlobalVars.Name + @" DNS Change Detected";
 			Icon = Properties.Resources.Icon;
+
+			if (Utilities.IsSystemDarkMode())
+			{
+				BackColor = Color.FromArgb(0x20, 0x20, 0x20);
+				ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
+
+				foreach (Control control in Controls)
+				{
+					if (control is Button)
+					{
+						var btn = control as Button;
+						btn.FlatStyle = FlatStyle.Flat;
+						btn.UseVisualStyleBackColor = false;
+					}
+
+					if (control is TextBox)
+					{
+						var tb = control as TextBox;
+						tb.BackColor = Color.FromArgb(0x30, 0x30, 0x30);
+						tb.ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
+						tb.BorderStyle = BorderStyle.FixedSingle;
+					}
+				}
+			}
 
 
 			var @interface = DNSValidate.GetInterfaceToValidate().Value;

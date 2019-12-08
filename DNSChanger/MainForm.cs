@@ -21,6 +21,30 @@ namespace DNSChanger
 			Text = GlobalVars.Name;
 			Icon = Properties.Resources.Icon;
 
+			if (Utilities.IsSystemDarkMode())
+			{
+				BackColor = Color.FromArgb(0x20, 0x20, 0x20);
+				ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
+
+				foreach (Control control in Controls)
+				{
+					if (control is Button)
+					{
+						var btn = control as Button;
+						btn.FlatStyle = FlatStyle.Flat;
+						btn.UseVisualStyleBackColor = false;
+					}
+
+					if (control is TextBox)
+					{
+						var tb = control as TextBox;
+						tb.BackColor = Color.FromArgb(0x30, 0x30, 0x30);
+						tb.ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
+						tb.BorderStyle = BorderStyle.FixedSingle;
+					}
+				}
+			}
+
 
 			_interfaceToValidate = DNSValidate.GetInterfaceToValidate();
 			if (_interfaceToValidate.HasValue)
@@ -308,15 +332,25 @@ namespace DNSChanger
 		private void ButtonSuccessAnimation(object sender)
 		{
 			var btn = sender as Button;
-			btn.BackColor = Color.LightGreen;
+			var defaultColor = btn.BackColor;
+
+			if (Utilities.IsSystemDarkMode())
+			{
+				btn.BackColor = Color.FromArgb(0x10, 0x50, 0x10);
+			}
+			else
+			{
+				btn.BackColor = Color.LightGreen;
+			}
 
 			var thr = new Thread(() =>
 			{
 				Thread.Sleep(600);
-				btn.BackColor = SystemColors.Control;
+				btn.BackColor = defaultColor;
 			}) {IsBackground = true};
 			thr.Start();
 		}
+
 
 		private void validateCb_CheckedChanged(object sender, EventArgs e)
 		{

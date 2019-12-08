@@ -1,5 +1,6 @@
 ﻿using DNSChanger.Structs;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace DNSChanger
@@ -14,6 +15,22 @@ namespace DNSChanger
 			InitializeComponent();
 			Text = GlobalVars.Name + @" Interface Selector";
 			Icon = Properties.Resources.Icon;
+
+			if (Utilities.IsSystemDarkMode())
+			{
+				BackColor = Color.FromArgb(0x20, 0x20, 0x20);
+				ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
+
+				foreach (Control control in Controls)
+				{
+					if (control is Button)
+					{
+						var btn = control as Button;
+						btn.FlatStyle = FlatStyle.Flat;
+						btn.UseVisualStyleBackColor = false;
+					}
+				}
+			}
 
 
 			FillInterfaces();

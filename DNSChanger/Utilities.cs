@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Management;
 using System.Security.Principal;
+using Microsoft.Win32;
 
 namespace DNSChanger
 {
@@ -28,7 +29,18 @@ namespace DNSChanger
 			{
 				return objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
 			}
+		}
 
+		private static bool? _isSystemDarkMode;
+		public static bool IsSystemDarkMode()
+		{
+			if (_isSystemDarkMode.HasValue) return _isSystemDarkMode.Value;
+
+			var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", false);
+			if (key == null) return false;
+
+			var val = (int) key.GetValue("AppsUseLightTheme", 1);
+			return (_isSystemDarkMode = val == 0).Value;
 		}
 	}
 }
