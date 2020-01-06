@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Kamil Monicz")]
 [assembly: AssemblyProduct("DNSChanger")]
-[assembly: AssemblyCopyright("Copyright © 2019 Kamil Monicz")]
+[assembly: AssemblyCopyright("Copyright © 2020 Kamil Monicz")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
