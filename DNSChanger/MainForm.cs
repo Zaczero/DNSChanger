@@ -1,4 +1,5 @@
-﻿using DNSChanger.Structs;
+﻿using DNSChanger.Properties;
+using DNSChanger.Structs;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -73,6 +74,11 @@ namespace DNSChanger
 			testTask.Start();
 		}
 
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			Settings.Default.Save();
+		}
+
 
 		private Interface GetSelectedInterface()
 		{
@@ -83,12 +89,21 @@ namespace DNSChanger
 		{
 			interfacesCombo.Items.Clear();
 
-			foreach (var @interface in NetshHelper.GetInterfaces())
+			var interfaces = NetshHelper.GetInterfaces();
+			var selectedItem = (object) null;
+			for (var i = 0; i < interfaces.Count; i++)
 			{
-				interfacesCombo.Items.Add(new ComboBoxItem(@interface.ToString(), @interface));
+				var item = new ComboBoxItem(interfaces[i].ToString(), interfaces[i]);
+				interfacesCombo.Items.Add(item);
+
+				if (interfaces[i].ToString() == Settings.Default.SelectedInterface)
+					selectedItem = item;
 			}
 
-			interfacesCombo.SelectedIndex = 0;
+			if (selectedItem != null)
+				interfacesCombo.SelectedItem = selectedItem;
+			else
+				interfacesCombo.SelectedIndex = 0;
 		}
 		
 		private void FillDnsCombo()
@@ -195,8 +210,9 @@ namespace DNSChanger
 			v6secondary.Text = null;
 			
 			var @interface = GetSelectedInterface();
+			Settings.Default.SelectedInterface = @interface.ToString();
+			
 			var dnsEntries = NetshHelper.GetDnsEntries(@interface);
-
 			var dnsV4 = dnsEntries.Where(d => d.IsV4).ToList();
 			var dnsV6 = dnsEntries.Where(d => d.IsV6).ToList();
 

@@ -22,5 +22,17 @@ namespace DNSChanger.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SelectedInterface {
+            get {
+                return ((string)(this["SelectedInterface"]));
+            }
+            set {
+                this["SelectedInterface"] = value;
+            }
+        }
     }
 }
