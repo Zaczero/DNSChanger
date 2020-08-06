@@ -122,7 +122,7 @@ namespace DNSChanger
 			UpdateDnsEntries(@interface, entries.Where(e => e.IsV6).ToList(), "ipv6");
 		}
 
-		private static void UpdateDnsEntries(Interface @interface, List<DNSEntry> entries, string ip)
+		private static void UpdateDnsEntries(Interface @interface, IReadOnlyList<DNSEntry> entries, string ip)
 		{
 			if (entries.Count == 0)
 			{

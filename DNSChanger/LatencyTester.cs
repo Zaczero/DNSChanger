@@ -1,5 +1,6 @@
 ﻿using DNSChanger.Structs;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 
@@ -9,14 +10,14 @@ namespace DNSChanger
 	{
 		public static event EventHandler LatencyUpdated;
 
-		public static void Run(DNSServerEntry[] dnsServers, int pings)
+		public static void Run(IEnumerable<DNSServerEntry> dnsServers, int pings)
 		{
-			for (var j = 0; j < dnsServers.Length; j++)
+			foreach (var dnsServer in dnsServers)
 			{
 				try
 				{
 					var results = new int[pings];
-					var address = dnsServers[j].DnsEntries.First().Value;
+					var address = dnsServer.DnsEntries.First().Value;
 					var success = true;
 
 					for (var i = 0; i < pings; i++)
@@ -52,15 +53,17 @@ namespace DNSChanger
 							totalMs += result;
 						}
 
-						dnsServers[j].Latency = (float) totalMs / pings;
+						dnsServer.Latency = (float) totalMs / pings;
 					}
 					else
 					{
-						dnsServers[j].Latency = float.MaxValue;
+						dnsServer.Latency = float.NaN;
 					}
 				}
 				catch
-				{ }
+				{
+					// ignored
+				}
 
 				LatencyUpdated?.Invoke(null, null);
 			}

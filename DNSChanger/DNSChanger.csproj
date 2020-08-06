@@ -87,13 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DNSChangeDetectedForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DNSChangeDetectedForm.Designer.cs">
-      <DependentUpon>DNSChangeDetectedForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DNSValidate.cs" />
+    <Compile Include="DNSCryptHelper.cs" />
     <Compile Include="InterfaceSelectionForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,9 +110,6 @@
     <Compile Include="Structs\DNSServerEntry.cs" />
     <Compile Include="Structs\Interface.cs" />
     <Compile Include="Utilities.cs" />
-    <EmbeddedResource Include="DNSChangeDetectedForm.resx">
-      <DependentUpon>DNSChangeDetectedForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="InterfaceSelectionForm.resx">
       <DependentUpon>InterfaceSelectionForm.cs</DependentUpon>
     </EmbeddedResource>

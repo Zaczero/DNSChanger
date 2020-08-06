@@ -11,21 +11,15 @@ namespace DNSChanger.Structs
 		public override string ToString()
 		{
 			if (Latency == -1f)
-			{
 				return $"{Name}";
-			}
 
 			if (Latency <= 1f)
-			{
-				return $"{Name} ( <1 ms )";
-			}
+				return $"{Name} [<1 ms]";
 
-			if (Latency == float.MaxValue)
-			{
-				return $"{Name} ( Timeout )";
-			}
+			if (float.IsNaN(Latency))
+				return $"{Name} [Timeout]";
 
-			return $"{Name} ( {Math.Round(Latency, 1)} ms )";
+			return $"{Name} [{Math.Round(Latency, 1)} ms]";
 		}
 	}
 }

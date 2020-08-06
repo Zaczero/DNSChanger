@@ -13,14 +13,13 @@ namespace DNSChanger
 {
 	public partial class MainForm : Form
 	{
-		private Interface? _interfaceToValidate;
 		private bool _ignoreDnsComboChanges;
 
 		public MainForm()
 		{
 			InitializeComponent();
 			Text = GlobalVars.Name;
-			Icon = Properties.Resources.Icon;
+			Icon = Resources.Icon;
 
 			if (Utilities.IsSystemDarkMode())
 			{
@@ -47,21 +46,12 @@ namespace DNSChanger
 			}
 
 
-			_interfaceToValidate = DNSValidate.GetInterfaceToValidate();
-			if (_interfaceToValidate.HasValue)
-			{
-				validateCb.Checked = true;
-				validateLbl.Text = _interfaceToValidate.Value.Name;
-			}
-
-
 			interfacesCombo.SelectedIndexChanged += InterfacesComboOnSelectedIndexChanged;
 			dnsCombo.SelectedIndexChanged += DnsComboOnSelectedIndexChanged;
 			v4primary.TextChanged += (sender, args) => MatchInputToDnsServer();
 			v4secondary.TextChanged += (sender, args) => MatchInputToDnsServer();
 			v6primary.TextChanged += (sender, args) => MatchInputToDnsServer();
 			v6secondary.TextChanged += (sender, args) => MatchInputToDnsServer();
-			validateCb.CheckedChanged += validateCb_CheckedChanged;
 			LatencyTester.LatencyUpdated += (sender, args) => RefreshDnsLatency();
 			
 
@@ -121,23 +111,30 @@ namespace DNSChanger
 
 		private void RefreshDnsLatency()
 		{
-			Invoke((MethodInvoker) delegate
+			try
 			{
-				_ignoreDnsComboChanges = true;
-
-				for (var i = 0; i < dnsCombo.Items.Count; i++)
+				Invoke((MethodInvoker) delegate
 				{
-					var item = (ComboBoxItem) dnsCombo.Items[i];
-					if (item.Value == null) continue;
+					_ignoreDnsComboChanges = true;
 
-					var dnsServerEntryItem = (DNSServerEntry) item.Value;
-					var dnsServerEntry = GlobalVars.DnsServers.First(d => d.Name == dnsServerEntryItem.Name);
+					for (var i = 0; i < dnsCombo.Items.Count; i++)
+					{
+						var item = (ComboBoxItem) dnsCombo.Items[i];
+						if (item.Value == null) continue;
 
-					dnsCombo.Items[i] = new ComboBoxItem(dnsServerEntry.ToString(), dnsServerEntry);
-				}
+						var dnsServerEntryItem = (DNSServerEntry) item.Value;
+						var dnsServerEntry = GlobalVars.DnsServers.First(d => d.Name == dnsServerEntryItem.Name);
 
-				_ignoreDnsComboChanges = false;
-			});
+						dnsCombo.Items[i] = new ComboBoxItem(dnsServerEntry.ToString(), dnsServerEntry);
+					}
+
+					_ignoreDnsComboChanges = false;
+				});
+			}
+			catch
+			{
+				// ignored
+			}
 		}
 
 		private void MatchInputToDnsServer()
@@ -321,7 +318,6 @@ namespace DNSChanger
 			var @interface = GetSelectedInterface();
 			NetshHelper.UpdateDnsEntries(@interface, dnsEntries);
 			NetshHelper.FlushDns();
-			UpdateDnsValidation();
 			
 			ButtonSuccessAnimation(sender);
 		}
@@ -340,24 +336,19 @@ namespace DNSChanger
 			NetshHelper.FlushDns();
 
 			InterfacesComboOnSelectedIndexChanged(interfacesCombo, null);
-			UpdateDnsValidation();
 
 			ButtonSuccessAnimation(sender);
 		}
 
-		private void ButtonSuccessAnimation(object sender)
+		private static void ButtonSuccessAnimation(object sender)
 		{
 			var btn = sender as Button;
 			var defaultColor = btn.BackColor;
 
 			if (Utilities.IsSystemDarkMode())
-			{
 				btn.BackColor = Color.FromArgb(0x10, 0x50, 0x10);
-			}
 			else
-			{
 				btn.BackColor = Color.LightGreen;
-			}
 
 			var thr = new Thread(() =>
 			{
@@ -365,48 +356,6 @@ namespace DNSChanger
 				btn.BackColor = defaultColor;
 			}) {IsBackground = true};
 			thr.Start();
-		}
-
-
-		private void validateCb_CheckedChanged(object sender, EventArgs e)
-		{
-			if (validateCb.Checked)
-			{
-				var interSelectForm = new InterfaceSelectionForm();
-				interSelectForm.ShowDialog(this);
-
-				if (!interSelectForm.Success)
-				{
-					validateCb.Checked = false;
-					return;
-				}
-
-				var @interface = interSelectForm.SelectedInterface;
-
-				_interfaceToValidate = @interface;
-				validateLbl.Text = _interfaceToValidate.Value.Name;
-
-				UpdateDnsValidation();
-			}
-			else
-			{
-				_interfaceToValidate = null;
-				validateLbl.Text = null;
-				
-				UpdateDnsValidation();
-			}
-		}
-
-		private void UpdateDnsValidation()
-		{
-			if (_interfaceToValidate.HasValue)
-			{
-				DNSValidate.Enable(_interfaceToValidate.Value);
-			}
-			else
-			{
-				DNSValidate.Disable();
-			}
 		}
 	}
 }

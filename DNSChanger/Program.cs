@@ -16,7 +16,7 @@ namespace DNSChanger
 				{
 					StartInfo = new ProcessStartInfo
 					{
-						FileName = Utilities.GetProcessPath(),
+						FileName = Utilities.GetCurrentProcessPath(),
 						Arguments = Process.GetCurrentProcess().GetCommandLine(),
 						UseShellExecute = true,
 						Verb = "runas",
@@ -27,8 +27,10 @@ namespace DNSChanger
 				{
 					proc.Start();
 				}
-				catch (Exception ex)
-				{ }
+				catch
+				{
+					// ignored
+				}
 
 				return;
 			}
@@ -36,15 +38,8 @@ namespace DNSChanger
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			if (!DNSValidate.ProcessArgs(args))
-			{
-				Application.Run(new DNSChangeDetectedForm());
-			}
-
 			if (args.Contains("-validate"))
-			{
 				return;
-			}
 
 			Application.Run(new MainForm());
 		}

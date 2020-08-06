@@ -43,8 +43,6 @@
 			this.v6secondary = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.v6primary = new System.Windows.Forms.TextBox();
-			this.validateCb = new System.Windows.Forms.CheckBox();
-			this.validateLbl = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// interfacesCombo
@@ -180,24 +178,6 @@
 			this.v6primary.Size = new System.Drawing.Size(162, 20);
 			this.v6primary.TabIndex = 4;
 			// 
-			// validateCb
-			// 
-			this.validateCb.AutoSize = true;
-			this.validateCb.Location = new System.Drawing.Point(12, 228);
-			this.validateCb.Name = "validateCb";
-			this.validateCb.Size = new System.Drawing.Size(150, 17);
-			this.validateCb.TabIndex = 6;
-			this.validateCb.Text = "Validate on Windows boot";
-			this.validateCb.UseVisualStyleBackColor = true;
-			// 
-			// validateLbl
-			// 
-			this.validateLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.validateLbl.Location = new System.Drawing.Point(155, 229);
-			this.validateLbl.Name = "validateLbl";
-			this.validateLbl.Size = new System.Drawing.Size(127, 16);
-			this.validateLbl.TabIndex = 16;
-			// 
 			// MainForm
 			// 
 			this.AcceptButton = this.saveBtn;
@@ -206,8 +186,6 @@
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.CancelButton = this.cancelBtn;
 			this.ClientSize = new System.Drawing.Size(282, 286);
-			this.Controls.Add(this.validateLbl);
-			this.Controls.Add(this.validateCb);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.v6secondary);
 			this.Controls.Add(this.label6);
@@ -251,8 +229,6 @@
         private System.Windows.Forms.TextBox v6secondary;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox v6primary;
-        private System.Windows.Forms.CheckBox validateCb;
-        private System.Windows.Forms.Label validateLbl;
     }
 }
 

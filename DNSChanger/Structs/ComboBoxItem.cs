@@ -2,8 +2,8 @@
 {
 	public class ComboBoxItem
 	{
-		public string Text;
-		public object Value;
+		public readonly string Text;
+		public readonly object Value;
 
 		public ComboBoxItem(string text, object value)
 		{
