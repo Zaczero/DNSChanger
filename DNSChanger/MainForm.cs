@@ -2,10 +2,8 @@
 using DNSChanger.Structs;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -21,54 +19,30 @@ namespace DNSChanger
 			Text = GlobalVars.Name;
 			Icon = Resources.Icon;
 
-			if (Utilities.IsSystemDarkMode())
-			{
-				BackColor = Color.FromArgb(0x20, 0x20, 0x20);
-				ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
-
-				foreach (Control control in Controls)
-				{
-					if (control is Button)
-					{
-						var btn = control as Button;
-						btn.FlatStyle = FlatStyle.Flat;
-						btn.UseVisualStyleBackColor = false;
-					}
-
-					if (control is TextBox)
-					{
-						var tb = control as TextBox;
-						tb.BackColor = Color.FromArgb(0x30, 0x30, 0x30);
-						tb.ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
-						tb.BorderStyle = BorderStyle.FixedSingle;
-					}
-				}
-			}
-
+			Utilities.ApplyThemeToForm(this);
 
 			interfacesCombo.SelectedIndexChanged += InterfacesComboOnSelectedIndexChanged;
 			dnsCombo.SelectedIndexChanged += DnsComboOnSelectedIndexChanged;
-			v4primary.TextChanged += (sender, args) => MatchInputToDnsServer();
-			v4secondary.TextChanged += (sender, args) => MatchInputToDnsServer();
-			v6primary.TextChanged += (sender, args) => MatchInputToDnsServer();
-			v6secondary.TextChanged += (sender, args) => MatchInputToDnsServer();
+			v4primaryText.TextChanged += (sender, args) => MatchInputToDnsServer();
+			v4secondaryText.TextChanged += (sender, args) => MatchInputToDnsServer();
+			v6primaryText.TextChanged += (sender, args) => MatchInputToDnsServer();
+			v6secondaryText.TextChanged += (sender, args) => MatchInputToDnsServer();
 			LatencyTester.LatencyUpdated += (sender, args) => RefreshDnsLatency();
 			
-
 			FillDnsCombo();
 			FillInterfacesCombo();
-			ActiveControl = v4primary;
-			
+			ActiveControl = v4primaryText;
 
-			var testTask = new Task(() => { LatencyTester.Run(GlobalVars.DnsServers, 5); });
-			testTask.Start();
+			new Task(() =>
+			{
+				LatencyTester.Run(GlobalVars.DNSServers, 5);
+			}).Start();
 		}
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Settings.Default.Save();
 		}
-
 
 		private Interface GetSelectedInterface()
 		{
@@ -101,7 +75,7 @@ namespace DNSChanger
 			dnsCombo.Items.Clear();
 			dnsCombo.Items.Add(new ComboBoxItem("Custom", null));
 
-			foreach (var dnsServer in GlobalVars.DnsServers)
+			foreach (var dnsServer in GlobalVars.DNSServers)
 			{
 				dnsCombo.Items.Add(new ComboBoxItem(dnsServer.ToString(), dnsServer));
 			}
@@ -123,7 +97,7 @@ namespace DNSChanger
 						if (item.Value == null) continue;
 
 						var dnsServerEntryItem = (DNSServerEntry) item.Value;
-						var dnsServerEntry = GlobalVars.DnsServers.First(d => d.Name == dnsServerEntryItem.Name);
+						var dnsServerEntry = GlobalVars.DNSServers.First(d => d.Name == dnsServerEntryItem.Name);
 
 						dnsCombo.Items[i] = new ComboBoxItem(dnsServerEntry.ToString(), dnsServerEntry);
 					}
@@ -141,10 +115,10 @@ namespace DNSChanger
 		{
 			_ignoreDnsComboChanges = true;
 
-			var v4primary = this.v4primary.Text.Trim();
-			var v4secondary = this.v4secondary.Text.Trim();
-			var v6primary = this.v6primary.Text.Trim();
-			var v6secondary = this.v6secondary.Text.Trim();
+			var v4primary = v4primaryText.Text.Trim();
+			var v4secondary = v4secondaryText.Text.Trim();
+			var v6primary = v6primaryText.Text.Trim();
+			var v6secondary = v6secondaryText.Text.Trim();
 
 			dnsCombo.SelectedIndex = 0;
 
@@ -201,10 +175,10 @@ namespace DNSChanger
 
 		private void InterfacesComboOnSelectedIndexChanged(object sender, EventArgs e)
 		{
-			v4primary.Text = null;
-			v4secondary.Text = null;
-			v6primary.Text = null;
-			v6secondary.Text = null;
+			v4primaryText.Text = null;
+			v4secondaryText.Text = null;
+			v6primaryText.Text = null;
+			v6secondaryText.Text = null;
 			
 			var @interface = GetSelectedInterface();
 			Settings.Default.SelectedInterface = @interface.ToString();
@@ -213,28 +187,28 @@ namespace DNSChanger
 			var dnsV4 = dnsEntries.Where(d => d.IsV4).ToList();
 			var dnsV6 = dnsEntries.Where(d => d.IsV6).ToList();
 
-			for (var i = 0; i < Math.Min(2, dnsV4.Count); i++)
+			for (var i = 0; i < 2; i++)
 			{
 				switch (i)
 				{
 					case 0:
-						v4primary.Text = dnsV4[i].Value;
+						v4primaryText.Text = i < dnsV4.Count ? dnsV4[i].Value : string.Empty;
 						break;
 					case 1:
-						v4secondary.Text = dnsV4[i].Value;
+						v4secondaryText.Text = i < dnsV4.Count ? dnsV4[i].Value : string.Empty;
 						break;
 				}
 			}
 
-			for (var i = 0; i < Math.Min(2, dnsV6.Count); i++)
+			for (var i = 0; i < 2; i++)
 			{
 				switch (i)
 				{
 					case 0:
-						v6primary.Text = dnsV6[i].Value;
+						v6primaryText.Text = i < dnsV6.Count ? dnsV6[i].Value : string.Empty;
 						break;
 					case 1:
-						v6secondary.Text = dnsV6[i].Value;
+						v6secondaryText.Text = i < dnsV6.Count ? dnsV6[i].Value : string.Empty;
 						break;
 				}
 			}
@@ -255,42 +229,41 @@ namespace DNSChanger
 			var dnsV4 = dnsEntries.Where(d => d.IsV4).ToList();
 			var dnsV6 = dnsEntries.Where(d => d.IsV6).ToList();
 
-			for (var i = 0; i < Math.Min(2, dnsV4.Count); i++)
+			for (var i = 0; i < 2; i++)
 			{
 				switch (i)
 				{
 					case 0:
-						v4primary.Text = dnsV4[i].Value;
+						v4primaryText.Text = i < dnsV4.Count ? dnsV4[i].Value : string.Empty;
 						break;
 					case 1:
-						v4secondary.Text = dnsV4[i].Value;
+						v4secondaryText.Text = i < dnsV4.Count ? dnsV4[i].Value : string.Empty;
 						break;
 				}
 			}
 
-			for (var i = 0; i < Math.Min(2, dnsV6.Count); i++)
+			for (var i = 0; i < 2; i++)
 			{
 				switch (i)
 				{
 					case 0:
-						v6primary.Text = dnsV6[i].Value;
+						v6primaryText.Text = i < dnsV6.Count ? dnsV6[i].Value : string.Empty;
 						break;
 					case 1:
-						v6secondary.Text = dnsV6[i].Value;
+						v6secondaryText.Text = i < dnsV6.Count ? dnsV6[i].Value : string.Empty;
 						break;
 				}
 			}
 		}
 
-
 		private void saveBtn_Click(object sender, EventArgs e)
 		{
 			var dnsEntries = new List<DNSEntry>(4);
 			
-			var v4primary = this.v4primary.Text.Trim();
-			var v4secondary = this.v4secondary.Text.Trim();
-			var v6primary = this.v6primary.Text.Trim();
-			var v6secondary = this.v6secondary.Text.Trim();
+			var v4primary = this.v4primaryText.Text.Trim();
+			var v4secondary = this.v4secondaryText.Text.Trim();
+			var v6primary = this.v6primaryText.Text.Trim();
+			var v6secondary = this.v6secondaryText.Text.Trim();
 
 			var ipv4regex = new Regex(@"^(\d+?[\.]?){4}$");
 			var ipv6regex = new Regex(@"^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$");
@@ -319,14 +292,14 @@ namespace DNSChanger
 			NetshHelper.UpdateDnsEntries(@interface, dnsEntries);
 			NetshHelper.FlushDns();
 			
-			ButtonSuccessAnimation(sender);
+			Utilities.ButtonSuccessAnimation(sender);
 		}
 
 		private void cancelBtn_Click(object sender, EventArgs e)
 		{
 			InterfacesComboOnSelectedIndexChanged(interfacesCombo, null);
 			
-			ButtonSuccessAnimation(sender);
+			Utilities.ButtonSuccessAnimation(sender);
 		}
 
 		private void resetBtn_Click(object sender, EventArgs e)
@@ -337,25 +310,33 @@ namespace DNSChanger
 
 			InterfacesComboOnSelectedIndexChanged(interfacesCombo, null);
 
-			ButtonSuccessAnimation(sender);
+			Utilities.ButtonSuccessAnimation(sender);
 		}
 
-		private static void ButtonSuccessAnimation(object sender)
+		private void settingsLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			var btn = sender as Button;
-			var defaultColor = btn.BackColor;
+			var preIsInstalled = DNSCryptHelper.IsInstalled();
+			var preIsRunning = preIsInstalled && DNSCryptHelper.IsRunning();
 
-			if (Utilities.IsSystemDarkMode())
-				btn.BackColor = Color.FromArgb(0x10, 0x50, 0x10);
-			else
-				btn.BackColor = Color.LightGreen;
+			new SettingsForm().ShowDialog(this);
 
-			var thr = new Thread(() =>
+			// check installation
+			var shouldRestart = preIsInstalled != DNSCryptHelper.IsInstalled();
+
+			// check service
+			if (!shouldRestart && preIsInstalled && preIsRunning != DNSCryptHelper.IsRunning())
+				shouldRestart = true;
+
+			if (shouldRestart)
 			{
-				Thread.Sleep(600);
-				btn.BackColor = defaultColor;
-			}) {IsBackground = true};
-			thr.Start();
+				MessageBox.Show(
+					$"DNSCrypt configuration change has been detected. " +
+						$"{GlobalVars.Name} will now be restarted. " +
+						$"Please remember to update your DNS server configuration.", 
+					GlobalVars.Name, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+				Utilities.Restart();
+			}
 		}
 	}
 }

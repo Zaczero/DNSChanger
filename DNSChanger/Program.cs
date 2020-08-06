@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Windows.Forms;
 
 namespace DNSChanger
@@ -11,35 +11,19 @@ namespace DNSChanger
 		public static void Main(string[] args)
 		{
 			if (!Utilities.IsAdministrator())
-			{
-				var proc = new Process
-				{
-					StartInfo = new ProcessStartInfo
-					{
-						FileName = Utilities.GetCurrentProcessPath(),
-						Arguments = Process.GetCurrentProcess().GetCommandLine(),
-						UseShellExecute = true,
-						Verb = "runas",
-					},
-				};
-
-				try
-				{
-					proc.Start();
-				}
-				catch
-				{
-					// ignored
-				}
-
-				return;
-			}
+				Utilities.Restart();
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
+			// backwards compatibility
 			if (args.Contains("-validate"))
 				return;
+
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
+			if (DNSCryptHelper.IsInstalled() && DNSCryptHelper.IsRunning())
+				GlobalVars.DNSServers.Insert(0, DNSCryptHelper.GetDNSServer());
 
 			Application.Run(new MainForm());
 		}

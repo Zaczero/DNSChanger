@@ -1,8 +1,12 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Management;
 using System.Security.Principal;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace DNSChanger
 {
@@ -14,20 +18,45 @@ namespace DNSChanger
 				return new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator);
 		}
 
-		public static string GetCurrentProcessPath()
+		private static string GetCurrentProcessPath()
 		{
 			return Process.GetCurrentProcess().MainModule.FileName;
 		}
 
-		public static string GetCommandLine(this Process process)
+		private static string GetCommandLine(this Process process)
 		{
-			using (var searcher = new ManagementObjectSearcher("SELECT `CommandLine` FROM `Win32_Process` WHERE `ProcessId` = " + process.Id))
+			using (var searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
 			using (var objects = searcher.Get())
 				return objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
 		}
 
+		public static void Restart()
+		{
+			var proc = new Process
+			{
+				StartInfo = new ProcessStartInfo
+				{
+					FileName = GetCurrentProcessPath(),
+					Arguments = Process.GetCurrentProcess().GetCommandLine(),
+					UseShellExecute = true,
+					Verb = "runas",
+				},
+			};
+
+			try
+			{
+				proc.Start();
+			}
+			catch
+			{
+				// ignored
+			}
+
+			Environment.Exit(0);
+		}
+
 		private static bool? _isSystemDarkMode;
-		public static bool IsSystemDarkMode()
+		private static bool IsSystemDarkMode()
 		{
 			if (_isSystemDarkMode.HasValue) return _isSystemDarkMode.Value;
 
@@ -36,6 +65,57 @@ namespace DNSChanger
 
 			var val = (int) key.GetValue("AppsUseLightTheme", 1);
 			return (_isSystemDarkMode = val == 0).Value;
+		}
+
+		public static void ApplyThemeToForm(Form form)
+		{
+			if (!IsSystemDarkMode())
+				return;
+
+			// apply dark theme
+			form.BackColor = Color.FromArgb(0x20, 0x20, 0x20);
+			form.ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
+
+			foreach (Control control in form.Controls)
+			{
+				if (control is Button)
+				{
+					var btn = control as Button;
+					btn.FlatStyle = FlatStyle.Flat;
+					btn.UseVisualStyleBackColor = false;
+				}
+				else if (control is TextBox)
+				{
+					var tb = control as TextBox;
+					tb.BackColor = Color.FromArgb(0x30, 0x30, 0x30);
+					tb.ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
+					tb.BorderStyle = BorderStyle.FixedSingle;
+				}
+				else if (control is LinkLabel)
+				{
+					var tb = control as LinkLabel;
+					tb.LinkColor = Color.FromArgb(0x1, 0x97, 0xF6);
+					tb.ActiveLinkColor = Color.FromArgb(0xDF, 0x29, 0x35);
+				}
+			}
+		}
+
+		public static void ButtonSuccessAnimation(object sender)
+		{
+			var btn = sender as Button;
+			var defaultColor = btn.BackColor;
+
+			if (IsSystemDarkMode())
+				btn.BackColor = Color.FromArgb(0x10, 0x50, 0x10);
+			else
+				btn.BackColor = Color.LightGreen;
+
+			var thr = new Thread(() =>
+			{
+				Thread.Sleep(600);
+				btn.BackColor = defaultColor;
+			}) {IsBackground = true};
+			thr.Start();
 		}
 	}
 }

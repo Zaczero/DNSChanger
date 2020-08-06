@@ -1,4 +1,5 @@
-﻿using DNSChanger.Structs;
+﻿using System.Collections.Generic;
+using DNSChanger.Structs;
 
 namespace DNSChanger
 {
@@ -6,7 +7,7 @@ namespace DNSChanger
 	{
 		public const string Name = "DNSChanger";
 
-		public static readonly DNSServerEntry[] DnsServers =
+		public static readonly List<DNSServerEntry> DNSServers = new List<DNSServerEntry>
 		{
 			new DNSServerEntry
 			{
@@ -70,18 +71,6 @@ namespace DNSChanger
 
 			new DNSServerEntry
 			{
-				Name = "Quad9",
-				DnsEntries = new []
-				{
-					new DNSEntry("9.9.9.9"),
-					new DNSEntry("149.112.112.112"),
-					new DNSEntry("2620:fe::fe"),
-					new DNSEntry("2620:fe::9"), 
-				},
-			},
-
-			new DNSServerEntry
-			{
 				Name = "OpenDNS",
 				DnsEntries = new []
 				{
@@ -89,6 +78,18 @@ namespace DNSChanger
 					new DNSEntry("208.67.220.220"),
 					new DNSEntry("2620:0:ccc::2"),
 					new DNSEntry("2620:0:ccd::2"), 
+				},
+			},
+
+			new DNSServerEntry
+			{
+				Name = "Quad9",
+				DnsEntries = new []
+				{
+					new DNSEntry("9.9.9.9"),
+					new DNSEntry("149.112.112.112"),
+					new DNSEntry("2620:fe::fe"),
+					new DNSEntry("2620:fe::9"), 
 				},
 			},
 		};
