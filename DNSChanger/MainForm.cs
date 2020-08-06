@@ -1,5 +1,6 @@
 ﻿using DNSChanger.Properties;
 using DNSChanger.Structs;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace DNSChanger
 
 		public MainForm()
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(MainForm)}", nameof(MainForm));
+
 			InitializeComponent();
 			Text = GlobalVars.Name;
 			Icon = Resources.Icon;
@@ -41,6 +44,7 @@ namespace DNSChanger
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(MainForm_FormClosing)}", nameof(MainForm));
 			Settings.Default.Save();
 		}
 
@@ -51,6 +55,8 @@ namespace DNSChanger
 
 		private void FillInterfacesCombo()
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(FillInterfacesCombo)}", nameof(MainForm));
+
 			interfacesCombo.Items.Clear();
 
 			var interfaces = NetshHelper.GetInterfaces();
@@ -72,13 +78,13 @@ namespace DNSChanger
 		
 		private void FillDnsCombo()
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(FillDnsCombo)}", nameof(MainForm));
+
 			dnsCombo.Items.Clear();
 			dnsCombo.Items.Add(new ComboBoxItem("Custom", null));
 
 			foreach (var dnsServer in GlobalVars.DNSServers)
-			{
 				dnsCombo.Items.Add(new ComboBoxItem(dnsServer.ToString(), dnsServer));
-			}
 
 			dnsCombo.SelectedIndex = 0;
 		}
@@ -115,10 +121,10 @@ namespace DNSChanger
 		{
 			_ignoreDnsComboChanges = true;
 
-			var v4primary = v4primaryText.Text.Trim();
-			var v4secondary = v4secondaryText.Text.Trim();
-			var v6primary = v6primaryText.Text.Trim();
-			var v6secondary = v6secondaryText.Text.Trim();
+			var v4Primary = v4primaryText.Text.Trim();
+			var v4Secondary = v4secondaryText.Text.Trim();
+			var v6Primary = v6primaryText.Text.Trim();
+			var v6Secondary = v6secondaryText.Text.Trim();
 
 			dnsCombo.SelectedIndex = 0;
 
@@ -127,7 +133,8 @@ namespace DNSChanger
 				var success = true;
 
 				var item = (ComboBoxItem) dnsCombo.Items[i];
-				if (item.Value == null) continue;
+				if (item.Value == null)
+					continue;
 
 				var dnsServer = (DNSServerEntry) item.Value;
 				
@@ -136,7 +143,7 @@ namespace DNSChanger
 
 				for (var j = 0; j < Math.Min(2, dnsV4.Count); j++)
 				{
-					if (v4primary != dnsV4[j].Value && v4secondary != dnsV4[j].Value)
+					if (v4Primary != dnsV4[j].Value && v4Secondary != dnsV4[j].Value)
 					{
 						// fail
 						success = false;
@@ -145,13 +152,11 @@ namespace DNSChanger
 				}
 
 				if (!success)
-				{
 					continue;
-				}
 
 				for (var j = 0; j < Math.Min(2, dnsV6.Count); j++)
 				{
-					if (v6primary != dnsV6[j].Value && v6secondary != dnsV6[j].Value)
+					if (v6Primary != dnsV6[j].Value && v6Secondary != dnsV6[j].Value)
 					{
 						// fail
 						success = false;
@@ -160,9 +165,9 @@ namespace DNSChanger
 				}
 
 				if (!success)
-				{
 					continue;
-				}
+					
+				SentrySdk.AddBreadcrumb($"{nameof(MatchInputToDnsServer)}: success={dnsServer.Name}", nameof(MainForm));
 
 				// success
 				dnsCombo.SelectedIndex = i;
@@ -175,6 +180,8 @@ namespace DNSChanger
 
 		private void InterfacesComboOnSelectedIndexChanged(object sender, EventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(InterfacesComboOnSelectedIndexChanged)}", nameof(MainForm));
+
 			v4primaryText.Text = null;
 			v4secondaryText.Text = null;
 			v6primaryText.Text = null;
@@ -218,10 +225,14 @@ namespace DNSChanger
 
 		private void DnsComboOnSelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (_ignoreDnsComboChanges) return;
+			if (_ignoreDnsComboChanges)
+				return;
 
 			var item = (ComboBoxItem) dnsCombo.SelectedItem;
-			if (item.Value == null) return;
+			if (item.Value == null)
+				return;
+
+			SentrySdk.AddBreadcrumb($"{nameof(DnsComboOnSelectedIndexChanged)}", nameof(MainForm));
 			
 			var dnsServer = (DNSServerEntry) item.Value;
 			var dnsEntries = dnsServer.DnsEntries;
@@ -258,35 +269,29 @@ namespace DNSChanger
 
 		private void saveBtn_Click(object sender, EventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(saveBtn_Click)}", nameof(MainForm));
+
 			var dnsEntries = new List<DNSEntry>(4);
 			
-			var v4primary = this.v4primaryText.Text.Trim();
-			var v4secondary = this.v4secondaryText.Text.Trim();
-			var v6primary = this.v6primaryText.Text.Trim();
-			var v6secondary = this.v6secondaryText.Text.Trim();
+			var v4Primary = v4primaryText.Text.Trim();
+			var v4Secondary = v4secondaryText.Text.Trim();
+			var v6Primary = v6primaryText.Text.Trim();
+			var v6Secondary = v6secondaryText.Text.Trim();
 
-			var ipv4regex = new Regex(@"^(\d+?[\.]?){4}$");
-			var ipv6regex = new Regex(@"^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$");
+			var ipv4Regex = new Regex(@"^(\d+?[\.]?){4}$");
+			var ipv6Regex = new Regex(@"^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$");
 
-			if (!string.IsNullOrEmpty(v4primary) && ipv4regex.IsMatch(v4primary))
-			{
-				dnsEntries.Add(new DNSEntry(v4primary));
-			}
+			if (!string.IsNullOrEmpty(v4Primary) && ipv4Regex.IsMatch(v4Primary))
+				dnsEntries.Add(new DNSEntry(v4Primary));
 
-			if (!string.IsNullOrEmpty(v4secondary) && ipv4regex.IsMatch(v4secondary))
-			{
-				dnsEntries.Add(new DNSEntry(v4secondary));
-			}
+			if (!string.IsNullOrEmpty(v4Secondary) && ipv4Regex.IsMatch(v4Secondary))
+				dnsEntries.Add(new DNSEntry(v4Secondary));
 
-			if (!string.IsNullOrEmpty(v6primary) && ipv6regex.IsMatch(v6primary))
-			{
-				dnsEntries.Add(new DNSEntry(v6primary));
-			}
+			if (!string.IsNullOrEmpty(v6Primary) && ipv6Regex.IsMatch(v6Primary))
+				dnsEntries.Add(new DNSEntry(v6Primary));
 
-			if (!string.IsNullOrEmpty(v6secondary) && ipv6regex.IsMatch(v6secondary))
-			{
-				dnsEntries.Add(new DNSEntry(v6secondary));
-			}
+			if (!string.IsNullOrEmpty(v6Secondary) && ipv6Regex.IsMatch(v6Secondary))
+				dnsEntries.Add(new DNSEntry(v6Secondary));
 			
 			var @interface = GetSelectedInterface();
 			NetshHelper.UpdateDnsEntries(@interface, dnsEntries);
@@ -297,6 +302,8 @@ namespace DNSChanger
 
 		private void cancelBtn_Click(object sender, EventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(cancelBtn_Click)}", nameof(MainForm));
+
 			InterfacesComboOnSelectedIndexChanged(interfacesCombo, null);
 			
 			Utilities.ButtonSuccessAnimation(sender);
@@ -304,6 +311,8 @@ namespace DNSChanger
 
 		private void resetBtn_Click(object sender, EventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(resetBtn_Click)}", nameof(MainForm));
+
 			var @interface = GetSelectedInterface();
 			NetshHelper.ResetDnsEntries(@interface);
 			NetshHelper.FlushDns();
@@ -315,8 +324,12 @@ namespace DNSChanger
 
 		private void settingsLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(settingsLabel_LinkClicked)}", nameof(MainForm));
+
 			var preIsInstalled = DNSCryptHelper.IsInstalled();
 			var preIsRunning = preIsInstalled && DNSCryptHelper.IsRunning();
+
+			SentrySdk.AddBreadcrumb($"{nameof(settingsLabel_LinkClicked)}: {nameof(preIsInstalled)}={preIsInstalled}, {nameof(preIsRunning)}={preIsRunning}", nameof(MainForm));
 
 			new SettingsForm().ShowDialog(this);
 
@@ -326,17 +339,11 @@ namespace DNSChanger
 			// check service
 			if (!shouldRestart && preIsInstalled && preIsRunning != DNSCryptHelper.IsRunning())
 				shouldRestart = true;
+				
+			SentrySdk.AddBreadcrumb($"{nameof(settingsLabel_LinkClicked)}: {nameof(shouldRestart)}={shouldRestart}", nameof(MainForm));
 
 			if (shouldRestart)
-			{
-				//MessageBox.Show(
-				//	$"DNSCrypt configuration change has been detected. " +
-				//		$"{GlobalVars.Name} will now be restarted. " +
-				//		$"Please remember to update your DNS server configuration.", 
-				//	GlobalVars.Name, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-
 				Utilities.Restart();
-			}
 		}
 	}
 }

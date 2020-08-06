@@ -1,5 +1,6 @@
 ﻿using DNSChanger.Structs;
 using DnsClient;
+using Sentry;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -46,16 +47,30 @@ namespace DNSChanger
 				"example-dnscrypt-proxy.toml"
 			);
 
+		static DNSCryptHelper()
+		{
+			SentrySdk.AddBreadcrumb($"{nameof(DNSCryptHelper)}: {nameof(DNSCryptRelease)}={DNSCryptRelease}", nameof(DNSCryptHelper));
+		}
+
 		public static bool IsInstalled()
 		{
 			if (!Directory.Exists(InstallationDirectory))
+			{
+				SentrySdk.AddBreadcrumb($"{nameof(IsInstalled)}: Directory not found", nameof(DNSCryptHelper));
 				return false;
+			}
 
 			if (!File.Exists(BinaryPath))
+			{
+				SentrySdk.AddBreadcrumb($"{nameof(IsInstalled)}: Binary not found", nameof(DNSCryptHelper));
 				return false;
+			}
 
 			if (!File.Exists(ConfigPath))
+			{
+				SentrySdk.AddBreadcrumb($"{nameof(IsInstalled)}: Config not found", nameof(DNSCryptHelper));
 				return false;
+			}
 
 			return true;
 		}
@@ -94,6 +109,8 @@ namespace DNSChanger
 
 		public static async Task<bool> Install(ProgressBar progressBar, Label statusLabel)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(Install)}", nameof(DNSCryptHelper));
+
 			progressBar.Minimum = 0;
 			progressBar.Maximum = 1;
 			progressBar.Value = 0;
@@ -117,24 +134,30 @@ namespace DNSChanger
 			}
 			catch (Exception ex)
 			{
+				SentrySdk.CaptureException(ex);
+
 				statusLabel.Text = $"[!] Exception: {ex.Message}";
 				return false;
 			}
 			
+			SentrySdk.AddBreadcrumb($"{nameof(Install)}: Extracting files (1/3)", nameof(DNSCryptHelper));
 			statusLabel.Text = "Extracting files (1/3)...";
 			if (Directory.Exists(UnzipDirectory))
 				Directory.Delete(UnzipDirectory, true);
 
 			Directory.CreateDirectory(UnzipDirectory);
-
+			
+			SentrySdk.AddBreadcrumb($"{nameof(Install)}: Extracting files (2/3)", nameof(DNSCryptHelper));
 			statusLabel.Text = "Extracting files (2/3)...";
 			var tempPath = Path.GetTempFileName() + ".zip";
 			File.WriteAllBytes(tempPath, buffer);
 				
+			SentrySdk.AddBreadcrumb($"{nameof(Install)}: Extracting files (3/3)", nameof(DNSCryptHelper));
 			statusLabel.Text = "Extracting files (3/3)...";
 			ZipFile.ExtractToDirectory(tempPath, UnzipDirectory);
 			File.Delete(tempPath);
-
+			
+			SentrySdk.AddBreadcrumb($"{nameof(Install)}: Setting up", nameof(DNSCryptHelper));
 			statusLabel.Text = "Setting up...";
 			File.Copy(ConfigExamplePath, ConfigPath, true);
 			
@@ -146,6 +169,8 @@ namespace DNSChanger
 
 		public static bool Uninstall(ProgressBar progressBar, Label statusLabel)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(Uninstall)}", nameof(DNSCryptHelper));
+
 			progressBar.Minimum = 0;
 			progressBar.Maximum = 1;
 			progressBar.Value = 0;
@@ -158,6 +183,8 @@ namespace DNSChanger
 			}
 			catch (Exception ex)
 			{
+				SentrySdk.CaptureException(ex);
+
 				statusLabel.Text = $"[!] Exception: {ex.Message}";
 				return false;
 			}
@@ -170,6 +197,8 @@ namespace DNSChanger
 
 		public static async Task StartService(ProgressBar progressBar, Label statusLabel)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(StartService)}", nameof(DNSCryptHelper));
+
 			progressBar.Minimum = 0;
 			progressBar.Maximum = 1;
 			progressBar.Value = 0;
@@ -203,6 +232,8 @@ namespace DNSChanger
 
 		public static async Task StopService(ProgressBar progressBar, Label statusLabel)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(StopService)}", nameof(DNSCryptHelper));
+
 			progressBar.Minimum = 0;
 			progressBar.Maximum = 1;
 			progressBar.Value = 0;
@@ -228,6 +259,8 @@ namespace DNSChanger
 
 		public static async Task OpenConfig()
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(OpenConfig)}", nameof(DNSCryptHelper));
+
 			await Task.Run(() =>
 			{
 				ExecuteProcess(ConfigPath);
@@ -236,6 +269,8 @@ namespace DNSChanger
 
 		public static async Task DebugProcess(ProgressBar progressBar, Label statusLabel)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(DebugProcess)}", nameof(DNSCryptHelper));
+
 			progressBar.Minimum = 0;
 			progressBar.Maximum = 1;
 			progressBar.Value = 0;
@@ -254,11 +289,15 @@ namespace DNSChanger
 
 		public static void SaveConfig(string config)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(SaveConfig)}", nameof(DNSCryptHelper));
+
 			File.WriteAllText(ConfigPath, config);
 		}
 
 		public static string LoadConfig()
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(LoadConfig)}", nameof(DNSCryptHelper));
+
 			return File.ReadAllText(ConfigPath);
 		}
 
@@ -290,6 +329,8 @@ namespace DNSChanger
 
 		private static void ExecuteProcessHidden(string path, string arguments = "")
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(ExecuteProcessHidden)}: {nameof(arguments)}={arguments}", nameof(DNSCryptHelper));
+
 			var psi = new ProcessStartInfo
 			{
 				Arguments = arguments,
@@ -309,6 +350,8 @@ namespace DNSChanger
 
 		private static void ExecuteProcess(string path, string arguments = "")
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(ExecuteProcess)}: {nameof(arguments)}={arguments}", nameof(DNSCryptHelper));
+
 			var process = Process.Start(path, arguments);
 
 			process.WaitForExit();

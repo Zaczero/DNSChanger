@@ -1,26 +1,29 @@
 ﻿using DNSChanger.DNSCryptSettings;
+using DNSChanger.Enums;
 using DNSChanger.Interfaces;
 using DNSChanger.Properties;
+using DNSChanger.Structs;
+using Sentry;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using DNSChanger.Enums;
-using DNSChanger.Structs;
 
 namespace DNSChanger
 {
 	public partial class SettingsForm : Form
 	{
-		private readonly Dictionary<IDNSCryptSetting, ComboBox> controls;
+		private readonly Dictionary<IDNSCryptSetting, ComboBox> _controls;
 
 		public SettingsForm()
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(SettingsForm)}", nameof(SettingsForm));
+
 			InitializeComponent();
 			Text = GlobalVars.Name + " Settings";
 			Icon = Resources.Icon;
 
 			Utilities.ApplyThemeToForm(this);
 			
-			controls = new Dictionary<IDNSCryptSetting, ComboBox>
+			_controls = new Dictionary<IDNSCryptSetting, ComboBox>
 			{
 				{new DNSCryptSetting_ipv4_servers(), ipv4_servers},
 				{new DNSCryptSetting_ipv6_servers(), ipv6_servers},
@@ -43,6 +46,8 @@ namespace DNSChanger
 
 		public void UpdateControls()
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(UpdateControls)}", nameof(SettingsForm));
+
 			installButton.Text = "Download and install";
 			installButton.Enabled = true;
 
@@ -50,9 +55,9 @@ namespace DNSChanger
 			serviceButton.Enabled = true;
 
 			configButton.Enabled = true;
-			runButton.Enabled = true;
+			debugButton.Enabled = true;
 
-			foreach (var pair in controls)
+			foreach (var pair in _controls)
 				pair.Value.Enabled = true;
 
 			configRecommendedButton.Enabled = true;
@@ -63,11 +68,13 @@ namespace DNSChanger
 			if (!DNSCryptHelper.IsInstalled())
 			{
 				// not installed
+				SentrySdk.AddBreadcrumb($"{nameof(UpdateControls)}: Not installed", nameof(SettingsForm));
+
 				serviceButton.Enabled = false;
 				configButton.Enabled = false;
-				runButton.Enabled = false;
+				debugButton.Enabled = false;
 
-				foreach (var pair in controls)
+				foreach (var pair in _controls)
 					pair.Value.Enabled = false;
 
 				configRecommendedButton.Enabled = false;
@@ -78,17 +85,21 @@ namespace DNSChanger
 			else
 			{
 				// installed
+				SentrySdk.AddBreadcrumb($"{nameof(UpdateControls)}: Installed", nameof(SettingsForm));
+
 				installButton.Text = "Uninstall";
 
 				if (DNSCryptHelper.IsRunning())
 				{
 					// running
+					SentrySdk.AddBreadcrumb($"{nameof(UpdateControls)}: Running", nameof(SettingsForm));
+
 					installButton.Enabled = false;
 					serviceButton.Text = "Stop service";
 					configButton.Enabled = false;
-					runButton.Enabled = false;
+					debugButton.Enabled = false;
 
-					foreach (var pair in controls)
+					foreach (var pair in _controls)
 						pair.Value.Enabled = false;
 
 					configRecommendedButton.Enabled = false;
@@ -99,12 +110,13 @@ namespace DNSChanger
 				else
 				{
 					// not running
+					SentrySdk.AddBreadcrumb($"{nameof(UpdateControls)}: Not running", nameof(SettingsForm));
 				}
 
 				// load controls
 				var config = DNSCryptHelper.LoadConfig();
 
-				foreach (var pair in controls)
+				foreach (var pair in _controls)
 				{
 					var currentSetting = pair.Key.GetCurrentSetting(config);
 					var settings = pair.Key.GetSettings(config);
@@ -131,24 +143,37 @@ namespace DNSChanger
 
 		private async void installButton_Click(object sender, System.EventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(installButton_Click)}", nameof(SettingsForm));
 			installButton.Enabled = false;
 
 			if (DNSCryptHelper.IsInstalled())
+			{
+				SentrySdk.AddBreadcrumb($"{nameof(installButton_Click)}: Uninstall", nameof(SettingsForm));
 				DNSCryptHelper.Uninstall(progressBar, statusLabel);
+			}
 			else
+			{
+				SentrySdk.AddBreadcrumb($"{nameof(installButton_Click)}: Install", nameof(SettingsForm));
 				await DNSCryptHelper.Install(progressBar, statusLabel);
+			}
 
 			UpdateControls();
 		}
 
 		private async void serviceButton_Click(object sender, System.EventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(serviceButton_Click)}", nameof(SettingsForm));
 			serviceButton.Enabled = false;
 
 			if (DNSCryptHelper.IsRunning())
+			{
+				SentrySdk.AddBreadcrumb($"{nameof(serviceButton_Click)}: Stop service", nameof(SettingsForm));
 				await DNSCryptHelper.StopService(progressBar, statusLabel);
+			}
 			else
 			{
+				SentrySdk.AddBreadcrumb($"{nameof(serviceButton_Click)}: Start service", nameof(SettingsForm));
+
 				saveConfigButton_Click(saveConfigButton, null);
 				await DNSCryptHelper.StartService(progressBar, statusLabel);
 			}
@@ -158,25 +183,27 @@ namespace DNSChanger
 
 		private async void configButton_Click(object sender, System.EventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(configButton_Click)}", nameof(SettingsForm));
+
 			configButton.Enabled = false;
-
 			await DNSCryptHelper.OpenConfig();
-
 			configButton.Enabled = true;
 		}
 
-		private async void runButton_Click(object sender, System.EventArgs e)
+		private async void debugButton_Click(object sender, System.EventArgs e)
 		{
-			runButton.Enabled = false;
+			SentrySdk.AddBreadcrumb($"{nameof(debugButton_Click)}", nameof(SettingsForm));
 
+			debugButton.Enabled = false;
 			await DNSCryptHelper.DebugProcess(progressBar, statusLabel);
-
-			runButton.Enabled = true;
+			debugButton.Enabled = true;
 		}
 
 		private void configRecommendedButton_Click(object sender, System.EventArgs e)
 		{
-			foreach (var pair in controls)
+			SentrySdk.AddBreadcrumb($"{nameof(configRecommendedButton_Click)}", nameof(SettingsForm));
+
+			foreach (var pair in _controls)
 			{
 				var setting = (ComboBoxItem) pair.Value.SelectedItem;
 				var targetSetting = pair.Key.GetSetting();
@@ -201,7 +228,9 @@ namespace DNSChanger
 
 		private void configPrivacyButton_Click(object sender, System.EventArgs e)
 		{
-			foreach (var pair in controls)
+			SentrySdk.AddBreadcrumb($"{nameof(configPrivacyButton_Click)}", nameof(SettingsForm));
+
+			foreach (var pair in _controls)
 			{
 				var setting = (ComboBoxItem) pair.Value.SelectedItem;
 				var targetSetting = pair.Key.GetSetting(DNSCryptSettingPreference.Privacy);
@@ -226,9 +255,11 @@ namespace DNSChanger
 
 		private void saveConfigButton_Click(object sender, System.EventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(saveConfigButton_Click)}", nameof(SettingsForm));
+
 			var config = DNSCryptHelper.LoadConfig();
 
-			foreach (var pair in controls)
+			foreach (var pair in _controls)
 			{
 				var setting = (ComboBoxItem) pair.Value.SelectedItem;
 				config = pair.Key.SetSetting(config, (string) setting.Value);
@@ -241,6 +272,8 @@ namespace DNSChanger
 
 		private void loadConfigButton_Click(object sender, System.EventArgs e)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(loadConfigButton_Click)}", nameof(SettingsForm));
+
 			UpdateControls();
 
 			Utilities.ButtonSuccessAnimation(sender);

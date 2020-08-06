@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Sentry;
 
 namespace DNSChanger
 {
@@ -10,6 +11,8 @@ namespace DNSChanger
 	{
 		private static Process CreateNetshProcess(string args, bool redirectOutput)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(CreateNetshProcess)}: {nameof(args)}={args}", nameof(NetshHelper));
+
 			return new Process
 			{
 				StartInfo =
@@ -75,41 +78,39 @@ namespace DNSChanger
 			while (!proc.StandardOutput.EndOfStream)
 			{
 				var str = proc.StandardOutput.ReadLine();
-				if (string.IsNullOrEmpty(str)) continue;
+				if (string.IsNullOrEmpty(str))
+					continue;
 
 				if (!isInList)
 				{
 					var match = Regex.Match(str, @"^\s*(Statically Configured DNS Servers:|DNS servers configured through DHCP:)\s+(?<Value>\S+)$");
-					if (!match.Success) continue;
+					if (!match.Success)
+						continue;
 
 					isInList = true;
 
-					if (match.Groups["Value"].Value == "None") continue;
+					if (match.Groups["Value"].Value == "None")
+						continue;
 					
-					var entry = new DNSEntry
+					entries.Add(new DNSEntry
 					{
 						Value = match.Groups["Value"].Value,
-					};
-
-					entries.Add(entry);
+					});
 				}
 				else
 				{
 					var match = Regex.Match(str, @"^\s*Register with which suffix:");
 					if (match.Success)
-					{
 						break;
-					}
 
 					var match2 = Regex.Match(str, @"^\s*(?<Value>\S+)$");
-					if (!match2.Success) continue;
+					if (!match2.Success)
+						continue;
 
-					var entry = new DNSEntry
+					entries.Add(new DNSEntry
 					{
 						Value = match2.Groups["Value"].Value,
-					};
-
-					entries.Add(entry);
+					});
 				}
 			}
 
@@ -165,6 +166,8 @@ namespace DNSChanger
 
 		public static void FlushDns()
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(FlushDns)}", nameof(NetshHelper));
+
 			var proc = new Process
 			{
 				StartInfo =

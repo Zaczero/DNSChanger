@@ -31,7 +31,7 @@
 			this.installButton = new System.Windows.Forms.Button();
 			this.serviceButton = new System.Windows.Forms.Button();
 			this.configButton = new System.Windows.Forms.Button();
-			this.runButton = new System.Windows.Forms.Button();
+			this.debugButton = new System.Windows.Forms.Button();
 			this.configRecommendedButton = new System.Windows.Forms.Button();
 			this.configPrivacyButton = new System.Windows.Forms.Button();
 			this.saveConfigButton = new System.Windows.Forms.Button();
@@ -100,13 +100,13 @@
 			// 
 			// runButton
 			// 
-			this.runButton.Location = new System.Drawing.Point(145, 41);
-			this.runButton.Name = "runButton";
-			this.runButton.Size = new System.Drawing.Size(125, 23);
-			this.runButton.TabIndex = 3;
-			this.runButton.Text = "Debug process";
-			this.runButton.UseVisualStyleBackColor = true;
-			this.runButton.Click += new System.EventHandler(this.runButton_Click);
+			this.debugButton.Location = new System.Drawing.Point(145, 41);
+			this.debugButton.Name = "debugButton";
+			this.debugButton.Size = new System.Drawing.Size(125, 23);
+			this.debugButton.TabIndex = 3;
+			this.debugButton.Text = "Debug process";
+			this.debugButton.UseVisualStyleBackColor = true;
+			this.debugButton.Click += new System.EventHandler(this.debugButton_Click);
 			// 
 			// configRecommendedButton
 			// 
@@ -455,7 +455,7 @@
 			this.Controls.Add(this.saveConfigButton);
 			this.Controls.Add(this.configPrivacyButton);
 			this.Controls.Add(this.configRecommendedButton);
-			this.Controls.Add(this.runButton);
+			this.Controls.Add(this.debugButton);
 			this.Controls.Add(this.configButton);
 			this.Controls.Add(this.serviceButton);
 			this.Controls.Add(this.installButton);
@@ -475,7 +475,7 @@
 		private System.Windows.Forms.Button installButton;
 		private System.Windows.Forms.Button serviceButton;
 		private System.Windows.Forms.Button configButton;
-		private System.Windows.Forms.Button runButton;
+		private System.Windows.Forms.Button debugButton;
 		private System.Windows.Forms.Button configRecommendedButton;
 		private System.Windows.Forms.Button configPrivacyButton;
 		private System.Windows.Forms.Button saveConfigButton;

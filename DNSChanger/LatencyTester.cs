@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using Sentry;
 
 namespace DNSChanger
 {
@@ -12,6 +13,8 @@ namespace DNSChanger
 
 		public static void Run(IEnumerable<DNSServerEntry> dnsServers, int pings)
 		{
+			SentrySdk.AddBreadcrumb($"{nameof(Run)}: {nameof(pings)}={pings}", nameof(LatencyTester));
+
 			foreach (var dnsServer in dnsServers)
 			{
 				try
@@ -60,13 +63,15 @@ namespace DNSChanger
 						dnsServer.Latency = float.NaN;
 					}
 				}
-				catch
+				catch (Exception ex)
 				{
-					// ignored
+					SentrySdk.CaptureException(ex);
 				}
 
 				LatencyUpdated?.Invoke(null, null);
 			}
+
+			SentrySdk.AddBreadcrumb($"{nameof(Run)}: Completed", nameof(LatencyTester));
 		}
 	}
 }
