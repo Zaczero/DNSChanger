@@ -148,7 +148,10 @@ namespace DNSChanger
 			if (DNSCryptHelper.IsRunning())
 				await DNSCryptHelper.StopService(progressBar, statusLabel);
 			else
+			{
+				saveConfigButton_Click(saveConfigButton, null);
 				await DNSCryptHelper.StartService(progressBar, statusLabel);
+			}
 
 			UpdateControls();
 		}

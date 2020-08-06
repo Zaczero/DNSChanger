@@ -113,7 +113,7 @@
 			this.configRecommendedButton.Location = new System.Drawing.Point(12, 365);
 			this.configRecommendedButton.Name = "configRecommendedButton";
 			this.configRecommendedButton.Size = new System.Drawing.Size(125, 23);
-			this.configRecommendedButton.TabIndex = 4;
+			this.configRecommendedButton.TabIndex = 32;
 			this.configRecommendedButton.Text = "Config: Balanced";
 			this.configRecommendedButton.UseVisualStyleBackColor = true;
 			this.configRecommendedButton.Click += new System.EventHandler(this.configRecommendedButton_Click);
@@ -123,7 +123,7 @@
 			this.configPrivacyButton.Location = new System.Drawing.Point(145, 365);
 			this.configPrivacyButton.Name = "configPrivacyButton";
 			this.configPrivacyButton.Size = new System.Drawing.Size(125, 23);
-			this.configPrivacyButton.TabIndex = 6;
+			this.configPrivacyButton.TabIndex = 33;
 			this.configPrivacyButton.Text = "Config: Privacy";
 			this.configPrivacyButton.UseVisualStyleBackColor = true;
 			this.configPrivacyButton.Click += new System.EventHandler(this.configPrivacyButton_Click);
@@ -133,7 +133,7 @@
 			this.saveConfigButton.Location = new System.Drawing.Point(12, 394);
 			this.saveConfigButton.Name = "saveConfigButton";
 			this.saveConfigButton.Size = new System.Drawing.Size(125, 23);
-			this.saveConfigButton.TabIndex = 7;
+			this.saveConfigButton.TabIndex = 34;
 			this.saveConfigButton.Text = "Save config";
 			this.saveConfigButton.UseVisualStyleBackColor = true;
 			this.saveConfigButton.Click += new System.EventHandler(this.saveConfigButton_Click);
@@ -143,7 +143,7 @@
 			this.loadConfigButton.Location = new System.Drawing.Point(145, 394);
 			this.loadConfigButton.Name = "loadConfigButton";
 			this.loadConfigButton.Size = new System.Drawing.Size(125, 23);
-			this.loadConfigButton.TabIndex = 8;
+			this.loadConfigButton.TabIndex = 35;
 			this.loadConfigButton.Text = "Load config";
 			this.loadConfigButton.UseVisualStyleBackColor = true;
 			this.loadConfigButton.Click += new System.EventHandler(this.loadConfigButton_Click);
@@ -153,7 +153,7 @@
 			this.progressBar.Location = new System.Drawing.Point(12, 441);
 			this.progressBar.Name = "progressBar";
 			this.progressBar.Size = new System.Drawing.Size(258, 10);
-			this.progressBar.TabIndex = 9;
+			this.progressBar.TabIndex = 37;
 			// 
 			// statusLabel
 			// 
@@ -161,7 +161,7 @@
 			this.statusLabel.Location = new System.Drawing.Point(12, 425);
 			this.statusLabel.Name = "statusLabel";
 			this.statusLabel.Size = new System.Drawing.Size(184, 13);
-			this.statusLabel.TabIndex = 10;
+			this.statusLabel.TabIndex = 36;
 			this.statusLabel.Text = "Nothing is running in the background.";
 			// 
 			// ipv4_servers
@@ -171,7 +171,7 @@
 			this.ipv4_servers.Location = new System.Drawing.Point(12, 88);
 			this.ipv4_servers.Name = "ipv4_servers";
 			this.ipv4_servers.Size = new System.Drawing.Size(125, 21);
-			this.ipv4_servers.TabIndex = 12;
+			this.ipv4_servers.TabIndex = 5;
 			// 
 			// label2
 			// 
@@ -179,7 +179,7 @@
 			this.label2.Location = new System.Drawing.Point(9, 72);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(91, 13);
-			this.label2.TabIndex = 11;
+			this.label2.TabIndex = 4;
 			this.label2.Text = "Use IPv4 servers:";
 			// 
 			// dnscrypt_servers
@@ -189,7 +189,7 @@
 			this.dnscrypt_servers.Location = new System.Drawing.Point(12, 128);
 			this.dnscrypt_servers.Name = "dnscrypt_servers";
 			this.dnscrypt_servers.Size = new System.Drawing.Size(125, 21);
-			this.dnscrypt_servers.TabIndex = 14;
+			this.dnscrypt_servers.TabIndex = 9;
 			// 
 			// label1
 			// 
@@ -197,7 +197,7 @@
 			this.label1.Location = new System.Drawing.Point(9, 112);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(120, 13);
-			this.label1.TabIndex = 13;
+			this.label1.TabIndex = 8;
 			this.label1.Text = "Use DNSCrypt protocol:";
 			// 
 			// doh_servers
@@ -207,7 +207,7 @@
 			this.doh_servers.Location = new System.Drawing.Point(145, 128);
 			this.doh_servers.Name = "doh_servers";
 			this.doh_servers.Size = new System.Drawing.Size(125, 21);
-			this.doh_servers.TabIndex = 18;
+			this.doh_servers.TabIndex = 11;
 			// 
 			// label3
 			// 
@@ -215,7 +215,7 @@
 			this.label3.Location = new System.Drawing.Point(142, 112);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(97, 13);
-			this.label3.TabIndex = 17;
+			this.label3.TabIndex = 10;
 			this.label3.Text = "Use DOH protocol:";
 			// 
 			// ipv6_servers
@@ -225,7 +225,7 @@
 			this.ipv6_servers.Location = new System.Drawing.Point(145, 88);
 			this.ipv6_servers.Name = "ipv6_servers";
 			this.ipv6_servers.Size = new System.Drawing.Size(125, 21);
-			this.ipv6_servers.TabIndex = 16;
+			this.ipv6_servers.TabIndex = 7;
 			// 
 			// label4
 			// 
@@ -233,7 +233,7 @@
 			this.label4.Location = new System.Drawing.Point(142, 72);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(91, 13);
-			this.label4.TabIndex = 15;
+			this.label4.TabIndex = 6;
 			this.label4.Text = "Use IPv6 servers:";
 			// 
 			// fallback_resolvers
@@ -243,7 +243,7 @@
 			this.fallback_resolvers.Location = new System.Drawing.Point(145, 208);
 			this.fallback_resolvers.Name = "fallback_resolvers";
 			this.fallback_resolvers.Size = new System.Drawing.Size(125, 21);
-			this.fallback_resolvers.TabIndex = 26;
+			this.fallback_resolvers.TabIndex = 19;
 			// 
 			// label5
 			// 
@@ -251,7 +251,7 @@
 			this.label5.Location = new System.Drawing.Point(142, 192);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(95, 13);
-			this.label5.TabIndex = 25;
+			this.label5.TabIndex = 18;
 			this.label5.Text = "Fallback resolvers:";
 			// 
 			// require_nolog
@@ -261,7 +261,7 @@
 			this.require_nolog.Location = new System.Drawing.Point(145, 168);
 			this.require_nolog.Name = "require_nolog";
 			this.require_nolog.Size = new System.Drawing.Size(125, 21);
-			this.require_nolog.TabIndex = 24;
+			this.require_nolog.TabIndex = 15;
 			// 
 			// label6
 			// 
@@ -269,7 +269,7 @@
 			this.label6.Location = new System.Drawing.Point(142, 152);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(88, 13);
-			this.label6.TabIndex = 23;
+			this.label6.TabIndex = 14;
 			this.label6.Text = "Require NOLOG:";
 			// 
 			// require_nofilter
@@ -279,7 +279,7 @@
 			this.require_nofilter.Location = new System.Drawing.Point(12, 208);
 			this.require_nofilter.Name = "require_nofilter";
 			this.require_nofilter.Size = new System.Drawing.Size(125, 21);
-			this.require_nofilter.TabIndex = 22;
+			this.require_nofilter.TabIndex = 17;
 			// 
 			// label7
 			// 
@@ -287,7 +287,7 @@
 			this.label7.Location = new System.Drawing.Point(9, 192);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(103, 13);
-			this.label7.TabIndex = 21;
+			this.label7.TabIndex = 16;
 			this.label7.Text = "Require NOFILTER:";
 			// 
 			// require_dnssec
@@ -297,7 +297,7 @@
 			this.require_dnssec.Location = new System.Drawing.Point(12, 168);
 			this.require_dnssec.Name = "require_dnssec";
 			this.require_dnssec.Size = new System.Drawing.Size(125, 21);
-			this.require_dnssec.TabIndex = 20;
+			this.require_dnssec.TabIndex = 13;
 			// 
 			// label8
 			// 
@@ -305,7 +305,7 @@
 			this.label8.Location = new System.Drawing.Point(9, 152);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(94, 13);
-			this.label8.TabIndex = 19;
+			this.label8.TabIndex = 12;
 			this.label8.Text = "Require DNSSEC:";
 			// 
 			// netprobe_address
@@ -315,7 +315,7 @@
 			this.netprobe_address.Location = new System.Drawing.Point(145, 288);
 			this.netprobe_address.Name = "netprobe_address";
 			this.netprobe_address.Size = new System.Drawing.Size(125, 21);
-			this.netprobe_address.TabIndex = 34;
+			this.netprobe_address.TabIndex = 27;
 			// 
 			// label9
 			// 
@@ -323,7 +323,7 @@
 			this.label9.Location = new System.Drawing.Point(142, 272);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(94, 13);
-			this.label9.TabIndex = 33;
+			this.label9.TabIndex = 26;
 			this.label9.Text = "Netprobe address:";
 			// 
 			// tls_disable_session_tickets
@@ -333,7 +333,7 @@
 			this.tls_disable_session_tickets.Location = new System.Drawing.Point(145, 248);
 			this.tls_disable_session_tickets.Name = "tls_disable_session_tickets";
 			this.tls_disable_session_tickets.Size = new System.Drawing.Size(125, 21);
-			this.tls_disable_session_tickets.TabIndex = 32;
+			this.tls_disable_session_tickets.TabIndex = 23;
 			// 
 			// label10
 			// 
@@ -341,7 +341,7 @@
 			this.label10.Location = new System.Drawing.Point(142, 232);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(117, 13);
-			this.label10.TabIndex = 31;
+			this.label10.TabIndex = 22;
 			this.label10.Text = "Disable session tickets:";
 			// 
 			// netprobe_timeout
@@ -351,7 +351,7 @@
 			this.netprobe_timeout.Location = new System.Drawing.Point(12, 288);
 			this.netprobe_timeout.Name = "netprobe_timeout";
 			this.netprobe_timeout.Size = new System.Drawing.Size(125, 21);
-			this.netprobe_timeout.TabIndex = 30;
+			this.netprobe_timeout.TabIndex = 25;
 			// 
 			// label11
 			// 
@@ -359,7 +359,7 @@
 			this.label11.Location = new System.Drawing.Point(9, 272);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(91, 13);
-			this.label11.TabIndex = 29;
+			this.label11.TabIndex = 24;
 			this.label11.Text = "Netprobe timeout:";
 			// 
 			// dnscrypt_ephemeral_keys
@@ -369,7 +369,7 @@
 			this.dnscrypt_ephemeral_keys.Location = new System.Drawing.Point(12, 248);
 			this.dnscrypt_ephemeral_keys.Name = "dnscrypt_ephemeral_keys";
 			this.dnscrypt_ephemeral_keys.Size = new System.Drawing.Size(125, 21);
-			this.dnscrypt_ephemeral_keys.TabIndex = 28;
+			this.dnscrypt_ephemeral_keys.TabIndex = 21;
 			// 
 			// label12
 			// 
@@ -377,7 +377,7 @@
 			this.label12.Location = new System.Drawing.Point(9, 232);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(94, 13);
-			this.label12.TabIndex = 27;
+			this.label12.TabIndex = 20;
 			this.label12.Text = "Disable key reuse:";
 			// 
 			// reject_ttl
@@ -387,7 +387,7 @@
 			this.reject_ttl.Location = new System.Drawing.Point(145, 328);
 			this.reject_ttl.Name = "reject_ttl";
 			this.reject_ttl.Size = new System.Drawing.Size(125, 21);
-			this.reject_ttl.TabIndex = 38;
+			this.reject_ttl.TabIndex = 31;
 			// 
 			// label13
 			// 
@@ -395,7 +395,7 @@
 			this.label13.Location = new System.Drawing.Point(142, 312);
 			this.label13.Name = "label13";
 			this.label13.Size = new System.Drawing.Size(106, 13);
-			this.label13.TabIndex = 37;
+			this.label13.TabIndex = 30;
 			this.label13.Text = "Block response TTL:";
 			// 
 			// block_ipv6
@@ -405,7 +405,7 @@
 			this.block_ipv6.Location = new System.Drawing.Point(12, 328);
 			this.block_ipv6.Name = "block_ipv6";
 			this.block_ipv6.Size = new System.Drawing.Size(125, 21);
-			this.block_ipv6.TabIndex = 36;
+			this.block_ipv6.TabIndex = 29;
 			// 
 			// label14
 			// 
@@ -413,7 +413,7 @@
 			this.label14.Location = new System.Drawing.Point(9, 312);
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(105, 13);
-			this.label14.TabIndex = 35;
+			this.label14.TabIndex = 28;
 			this.label14.Text = "Block IPv6 requests:";
 			// 
 			// SettingsForm
