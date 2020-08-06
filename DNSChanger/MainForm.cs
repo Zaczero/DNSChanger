@@ -329,11 +329,11 @@ namespace DNSChanger
 
 			if (shouldRestart)
 			{
-				MessageBox.Show(
-					$"DNSCrypt configuration change has been detected. " +
-						$"{GlobalVars.Name} will now be restarted. " +
-						$"Please remember to update your DNS server configuration.", 
-					GlobalVars.Name, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+				//MessageBox.Show(
+				//	$"DNSCrypt configuration change has been detected. " +
+				//		$"{GlobalVars.Name} will now be restarted. " +
+				//		$"Please remember to update your DNS server configuration.", 
+				//	GlobalVars.Name, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
 
 				Utilities.Restart();
 			}
