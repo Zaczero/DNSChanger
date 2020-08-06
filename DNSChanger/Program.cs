@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sentry;
+using System;
 using System.Linq;
 using System.Net;
 using System.Windows.Forms;
@@ -10,6 +11,8 @@ namespace DNSChanger
 		[STAThread]
 		public static void Main(string[] args)
 		{
+			SentrySdk.Init("https://d18c4851a8074b0ebf7b95392f8a69c3@o321212.ingest.sentry.io/5380665");
+
 			if (!Utilities.IsAdministrator())
 				Utilities.Restart();
 
