@@ -1,33 +1,75 @@
-# DNSChanger
+# ![DNSChanger small logo](https://raw.githubusercontent.com/Zaczero/DNSChanger/master/icon/dnsc_small.png) DNSChanger
 
-The ultimate Windows DNS changer tool (using netsh).  
-Find the fastest DNS servers and use them in just few mouse clicks!
+![release](https://img.shields.io/github/release/Zaczero/DNSChanger.svg)
+![license](https://img.shields.io/github/license/Zaczero/DNSChanger.svg)
 
-![Zaczero/DNSChanger UI showcase](https://github.com/Zaczero/DNSChanger/blob/master/resources/showcase.png)
-![Zaczero/DNSChanger UI showcase - DNS change detected](https://github.com/Zaczero/DNSChanger/blob/master/resources/showcase_change.png)
+The ultimate Windows DNS changer tool (with DNSCrypt).  
+Private and secure DNS is just a few mouse clicks away.
 
-Have you ever wondered how much time you can save just by changing the DNS servers? Let's say that you can save ~30ms per request. You typically send around 2000 of them per day.
+![Zaczero/DNSChanger UI showcase](https://raw.githubusercontent.com/Zaczero/DNSChanger/master/resources/showcase_dark.png)
 
-`0.03s. x 2000 x 365 days = 21900s.`
+Learn more about DNSCrypt @ [www.dnscrypt.org](https://www.dnscrypt.org/)
 
-You are going to save even 6 hours per year!
+## 🌤️ Installation
 
-## Features
+[Browse latest GitHub release](https://github.com/Zaczero/DNSChanger/releases/latest)
 
+## 🎡 Features
+
+* DNSCrypt support
+* DNS-over-HTTPS (DoH) support - *using DNSCrypt*
 * DNS latency checker
-* Network interface selector
-* Set Cloudflare, Google or OpenDNS DNS
-* Set custom DNS
-* Reset to ISP's default DNS
-* DNS validation on Windows boot
-* Native IPv4 + IPv6 support using netsh
-* Windows 10 theme sync
-* Completely open-source
+* Per network interface configuration
+* Easy reset to ISP's default DNS
+* Out of the box IPv4 & IPv6 support
+* Windows 10 theme synchronization
+* 100% Open-Source *- including 3rd party libraries*
 
-### Dark mode preview (Windows 10)
+### Built-in DNS server list
 
-![Zaczero/DNSChanger UI showcase](https://github.com/Zaczero/DNSChanger/blob/master/resources/showcase_dark.png)
+Save some time by using one of the built-in DNS servers.  
+Those are optional as you can always set a custom DNS server with an ease.
 
-## Download
+* DNSCrypt *- via localhost*
+* Cloudflare
+* Google
+* AdGuard
+* CZ.NIC
+* NextDNS
+* OpenDNS
+* Quad9
 
-* https://github.com/Zaczero/DNSChanger/releases/latest
+### Getting started with DNSCrypt (in 30 seconds)
+
+1. Start the app & open **DNSCrypt configuration**
+2. Click **[Download and install]**
+3. *(optional)* Edit configuration to your will
+4. Click **[Start service]** and wait a few seconds
+5. Close the window and wait for DNSChanger to restart
+6. From the list select your network interface
+7. Choose DNSCrypt from the DNS server list and click **[Save]**
+
+Finally, validate your configuration using [DNS leak test](https://www.dnsleaktest.com/).
+
+## 🚗 Requirements
+
+* .NET Framework 4.7.2 *or newer*
+
+## Footer
+
+### 📧 Contact
+
+* Email: [kamil@monicz.pl](mailto:kamil@monicz.pl)
+* PGP: [0x9D7BC5B97BB0A707](https://gist.github.com/Zaczero/158da01bfd5b6d236f2b8ceb62dd9698)
+
+### 📃 License
+
+* [Zaczero/DNSChanger](https://github.com/Zaczero/DNSCrypt/blob/master/LICENSE)
+* [DNSCrypt/dnscrypt-proxy](https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/LICENSE)
+* [dotnet/corefx](https://github.com/dotnet/corefx/blob/master/LICENSE.TXT)
+* [Fody/Fody](https://github.com/Fody/Fody/blob/master/License.txt)
+* [Fody/Costura](https://github.com/Fody/Costura/blob/develop/LICENSE)
+* [getsentry/sentry-dotnet](https://github.com/getsentry/sentry-dotnet/blob/main/LICENSE)
+* [getsentry/sentry-dotnet-platform-abstractions](https://github.com/getsentry/sentry-dotnet-platform-abstractions/blob/master/LICENSE)
+* [JamesNK/Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md)
+* [MichaCo/DnsClient.NET](https://github.com/MichaCo/DnsClient.NET/blob/dev/LICENSE)
