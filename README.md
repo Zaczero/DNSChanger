@@ -64,7 +64,7 @@ Finally, validate your configuration using [DNS leak test](https://www.dnsleakte
 
 ### 📃 License
 
-* [Zaczero/DNSChanger](https://github.com/Zaczero/DNSCrypt/blob/master/LICENSE)
+* [Zaczero/DNSChanger](https://github.com/Zaczero/DNSChanger/blob/master/LICENSE)
 * [DNSCrypt/dnscrypt-proxy](https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/LICENSE)
 * [dotnet/corefx](https://github.com/dotnet/corefx/blob/master/LICENSE.TXT)
 * [Fody/Fody](https://github.com/Fody/Fody/blob/master/License.txt)
