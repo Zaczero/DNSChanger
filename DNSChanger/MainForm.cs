@@ -71,7 +71,7 @@ namespace DNSChanger
 			}
 
 			// some users do not have any interfaces available
-			if (interfacesCombo.Items.Count <= 0)
+			if (interfacesCombo.Items.Count == 0)
 			{
 				const string message = "Failed to fetch network interface list";
 
