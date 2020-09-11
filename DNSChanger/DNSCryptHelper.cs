@@ -353,10 +353,7 @@ namespace DNSChanger
 		private static void ExecuteProcess(string path, string arguments = "")
 		{
 			SentrySdk.AddBreadcrumb($"{nameof(ExecuteProcess)}: {nameof(arguments)}={arguments}", nameof(DNSCryptHelper));
-
-			var process = Process.Start(path, arguments);
-
-			process.WaitForExit();
+			Process.Start(path, arguments).WaitForExit();
 		}
 	}
 }
