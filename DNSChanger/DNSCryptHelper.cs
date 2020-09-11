@@ -264,7 +264,8 @@ namespace DNSChanger
 
 			await Task.Run(() =>
 			{
-				ExecuteProcess(ConfigPath);
+				// TODO: better argument escaping
+				ExecuteProcess("explorer", $"\"{ConfigPath}\"");
 			});
 		}
 
