@@ -59,15 +59,24 @@ namespace DNSChanger
 
 			interfacesCombo.Items.Clear();
 
-			var interfaces = NetshHelper.GetInterfaces();
 			var selectedItem = (object) null;
-			for (var i = 0; i < interfaces.Count; i++)
+
+			foreach (var @interface in NetshHelper.GetInterfaces())
 			{
-				var item = new ComboBoxItem(interfaces[i].ToString(), interfaces[i]);
+				var item = new ComboBoxItem(@interface.ToString(), @interface);
 				interfacesCombo.Items.Add(item);
 
-				if (interfaces[i].ToString() == Settings.Default.SelectedInterface)
+				if (@interface.ToString() == Settings.Default.SelectedInterface)
 					selectedItem = item;
+			}
+
+			// some users do not have any interfaces available
+			if (interfacesCombo.Items.Count <= 0)
+			{
+				const string message = "Failed to fetch network interface list";
+
+				MessageBox.Show(message, GlobalVars.Name + " Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				throw new Exception(message);
 			}
 
 			if (selectedItem != null)

@@ -36,10 +36,14 @@ namespace DNSChanger
 
 			while (!proc.StandardOutput.EndOfStream)
 			{
-				var str = proc.StandardOutput.ReadLine();
-				if (string.IsNullOrEmpty(str)) continue;
+				var outputLine = proc.StandardOutput.ReadLine();
 
-				var match = Regex.Match(str, @"^(?<Enabled>Enabled|Disabled)\s+(?<Connected>Connected|Disconnected)\s+(?<Type>\S+)\s+(?<Name>.+)$");
+				if (string.IsNullOrEmpty(outputLine))
+					continue;
+
+				SentrySdk.AddBreadcrumb($"{nameof(GetInterfaces)}: {nameof(outputLine)}={outputLine}", nameof(NetshHelper));
+
+				var match = Regex.Match(outputLine, @"^(?<Enabled>Enabled|Disabled)\s+(?<Connected>Connected|Disconnected)\s+(?<Type>\S+)\s+(?<Name>.+)$");
 				if (!match.Success) continue;
 
 				var @interface = new Interface
