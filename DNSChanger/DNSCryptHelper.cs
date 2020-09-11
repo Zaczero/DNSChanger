@@ -103,6 +103,7 @@ namespace DNSChanger
 				DnsEntries = new[]
 				{
 					new DNSEntry("127.0.0.1"),
+					new DNSEntry("::1"),
 				},
 			};
 		}
