@@ -4,7 +4,6 @@ using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -191,44 +190,12 @@ namespace DNSChanger
 		{
 			SentrySdk.AddBreadcrumb($"{nameof(InterfacesComboOnSelectedIndexChanged)}", nameof(MainForm));
 
-			v4primaryText.Text = null;
-			v4secondaryText.Text = null;
-			v6primaryText.Text = null;
-			v6secondaryText.Text = null;
-			
 			var @interface = GetSelectedInterface();
 			Settings.Default.SelectedInterface = @interface.ToString();
 			
-			var dnsEntries = NetshHelper.GetDnsEntries(@interface);
-			var dnsV4 = dnsEntries.Where(d => d.IsV4).ToList();
-			var dnsV6 = dnsEntries.Where(d => d.IsV6).ToList();
+			var dnsEntries = NetshHelper.GetDnsEntries(@interface).ToArray();
 
-			for (var i = 0; i < 2; i++)
-			{
-				switch (i)
-				{
-					case 0:
-						v4primaryText.Text = i < dnsV4.Count ? dnsV4[i].Value : string.Empty;
-						break;
-					case 1:
-						v4secondaryText.Text = i < dnsV4.Count ? dnsV4[i].Value : string.Empty;
-						break;
-				}
-			}
-
-			for (var i = 0; i < 2; i++)
-			{
-				switch (i)
-				{
-					case 0:
-						v6primaryText.Text = i < dnsV6.Count ? dnsV6[i].Value : string.Empty;
-						break;
-					case 1:
-						v6secondaryText.Text = i < dnsV6.Count ? dnsV6[i].Value : string.Empty;
-						break;
-				}
-			}
-			
+			DisplayDnsEntries(dnsEntries);
 			MatchInputToDnsServer();
 		}
 
@@ -246,6 +213,11 @@ namespace DNSChanger
 			var dnsServer = (DNSServerEntry) item.Value;
 			var dnsEntries = dnsServer.DnsEntries;
 
+			DisplayDnsEntries(dnsEntries);
+		}
+
+		private void DisplayDnsEntries(DNSEntry[] dnsEntries)
+		{
 			var dnsV4 = dnsEntries.Where(d => d.IsV4).ToList();
 			var dnsV6 = dnsEntries.Where(d => d.IsV6).ToList();
 
@@ -280,27 +252,23 @@ namespace DNSChanger
 		{
 			SentrySdk.AddBreadcrumb($"{nameof(saveBtn_Click)}", nameof(MainForm));
 
-			var dnsEntries = new List<DNSEntry>(4);
-			
-			var v4Primary = v4primaryText.Text.Trim();
-			var v4Secondary = v4secondaryText.Text.Trim();
-			var v6Primary = v6primaryText.Text.Trim();
-			var v6Secondary = v6secondaryText.Text.Trim();
+			var dnsTextBoxes = new[]
+			{
+				v4primaryText,
+				v4secondaryText,
+				v6primaryText,
+				v6secondaryText,
+			};
 
-			var ipv4Regex = new Regex(@"^(\d+?[\.]?){4}$");
-			var ipv6Regex = new Regex(@"^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$");
+			var dnsEntries = new List<DNSEntry>(dnsTextBoxes.Length);
 
-			if (!string.IsNullOrEmpty(v4Primary) && ipv4Regex.IsMatch(v4Primary))
-				dnsEntries.Add(new DNSEntry(v4Primary));
+			foreach (var dnsTextBox in dnsTextBoxes)
+			{
+				var dnsText = dnsTextBox.Text.Trim();
 
-			if (!string.IsNullOrEmpty(v4Secondary) && ipv4Regex.IsMatch(v4Secondary))
-				dnsEntries.Add(new DNSEntry(v4Secondary));
-
-			if (!string.IsNullOrEmpty(v6Primary) && ipv6Regex.IsMatch(v6Primary))
-				dnsEntries.Add(new DNSEntry(v6Primary));
-
-			if (!string.IsNullOrEmpty(v6Secondary) && ipv6Regex.IsMatch(v6Secondary))
-				dnsEntries.Add(new DNSEntry(v6Secondary));
+				if (GlobalVars.IpAddressRegex.IsMatch(dnsText))
+					dnsEntries.Add(new DNSEntry(dnsText));
+			}
 			
 			var @interface = GetSelectedInterface();
 			NetshHelper.UpdateDnsEntries(@interface, dnsEntries);

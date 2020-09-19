@@ -1,9 +1,10 @@
 ﻿using DNSChanger.Structs;
+using Sentry;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Sentry;
 
 namespace DNSChanger
 {
@@ -30,27 +31,36 @@ namespace DNSChanger
 		public static List<Interface> GetInterfaces()
 		{
 			var interfaces = new List<Interface>();
+			var process = CreateNetshProcess("int show interface", true);
 
-			var proc = CreateNetshProcess("int show interface", true);
-			proc.Start();
+			process.Start();
 
-			while (!proc.StandardOutput.EndOfStream)
+			var isList = false;
+
+			while (!process.StandardOutput.EndOfStream)
 			{
-				var outputLine = proc.StandardOutput.ReadLine();
+				var str = process.StandardOutput.ReadLine();
 
-				if (string.IsNullOrEmpty(outputLine))
+				if (string.IsNullOrEmpty(str))
 					continue;
+					
+				// added for purpose of debugging: https://github.com/Zaczero/DNSChanger/issues/2
+				SentrySdk.AddBreadcrumb($"{nameof(GetInterfaces)}: {nameof(str)}={str}", nameof(NetshHelper));
 
-				SentrySdk.AddBreadcrumb($"{nameof(GetInterfaces)}: {nameof(outputLine)}={outputLine}", nameof(NetshHelper));
+				if (!isList)
+				{
+					if (str.Length > 0 && str.StartsWith(new string(str[0], 6), StringComparison.Ordinal))
+						isList = true;
 
-				var match = Regex.Match(outputLine, @"^(?<Enabled>Enabled|Disabled)\s+(?<Connected>Connected|Disconnected)\s+(?<Type>\S+)\s+(?<Name>.+)$");
-				if (!match.Success) continue;
+					continue;
+				}
+
+				var match = Regex.Match(str, @"^(?<AdminState>\S+)\s+(?<State>\S+)\s+(?<Type>\S+)\s+(?<Name>.+)$");
+				if (!match.Success)
+					continue;
 
 				var @interface = new Interface
 				{
-					Enabled = match.Groups["Enabled"].Value == "Enabled",
-					Connected = match.Groups["Connected"].Value == "Connected",
-					Type = match.Groups["Type"].Value,
 					Name = match.Groups["Name"].Value,
 				};
 
@@ -73,48 +83,35 @@ namespace DNSChanger
 		private static List<DNSEntry> GetDnsEntries(Interface @interface, string ip)
 		{
 			var entries = new List<DNSEntry>();
+			var process = CreateNetshProcess($"int {ip} show dns \"{@interface.Name}\"", true);
 
-			var proc = CreateNetshProcess($"int {ip} show dns \"{@interface.Name}\"", true);
-			proc.Start();
+			process.Start();
 
-			var isInList = false;
-
-			while (!proc.StandardOutput.EndOfStream)
+			while (!process.StandardOutput.EndOfStream)
 			{
-				var str = proc.StandardOutput.ReadLine();
+				var str = process.StandardOutput.ReadLine();
+
 				if (string.IsNullOrEmpty(str))
 					continue;
 
-				if (!isInList)
-				{
-					var match = Regex.Match(str, @"^\s*(Statically Configured DNS Servers:|DNS servers configured through DHCP:)\s+(?<Value>\S+)$");
-					if (!match.Success)
-						continue;
+				// added for purpose of debugging: https://github.com/Zaczero/DNSChanger/issues/2
+				SentrySdk.AddBreadcrumb($"{nameof(GetDnsEntries)}: {nameof(str)}={str}", nameof(NetshHelper));
 
-					isInList = true;
+				var strSplit = str.Split(new [] {' ', '\t'}, StringSplitOptions.RemoveEmptyEntries);
 
-					if (match.Groups["Value"].Value == "None")
-						continue;
-					
-					entries.Add(new DNSEntry
-					{
-						Value = match.Groups["Value"].Value,
-					});
-				}
-				else
+				foreach (var strPart in strSplit)
 				{
-					var match = Regex.Match(str, @"^\s*Register with which suffix:");
+					// better safe than sorry :-)
+					var strPartTrimmed = strPart.Trim();
+
+					var match = Regex.Match(strPartTrimmed, GlobalVars.IpAddressRegexPattern);
 					if (match.Success)
-						break;
-
-					var match2 = Regex.Match(str, @"^\s*(?<Value>\S+)$");
-					if (!match2.Success)
-						continue;
-
-					entries.Add(new DNSEntry
 					{
-						Value = match2.Groups["Value"].Value,
-					});
+						entries.Add(new DNSEntry
+						{
+							Value = match.Value,
+						});
+					}
 				}
 			}
 

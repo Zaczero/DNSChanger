@@ -1,9 +1,9 @@
 ﻿using DNSChanger.Structs;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
-using Sentry;
 
 namespace DNSChanger
 {
