@@ -20,6 +20,7 @@ namespace DNSChanger
 
 		private static string GetCurrentProcessPath()
 		{
+			// ReSharper disable once PossibleNullReferenceException
 			return Process.GetCurrentProcess().MainModule.FileName;
 		}
 
@@ -58,10 +59,12 @@ namespace DNSChanger
 		private static bool? _isSystemDarkMode;
 		private static bool IsSystemDarkMode()
 		{
-			if (_isSystemDarkMode.HasValue) return _isSystemDarkMode.Value;
+			if (_isSystemDarkMode.HasValue)
+				return _isSystemDarkMode.Value;
 
 			var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", false);
-			if (key == null) return false;
+			if (key == null)
+				return false;
 
 			var val = (int) key.GetValue("AppsUseLightTheme", 1);
 			return (_isSystemDarkMode = val == 0).Value;
@@ -78,24 +81,21 @@ namespace DNSChanger
 
 			foreach (Control control in form.Controls)
 			{
-				if (control is Button)
+				switch (control)
 				{
-					var btn = control as Button;
-					btn.FlatStyle = FlatStyle.Flat;
-					btn.UseVisualStyleBackColor = false;
-				}
-				else if (control is TextBox)
-				{
-					var tb = control as TextBox;
-					tb.BackColor = Color.FromArgb(0x30, 0x30, 0x30);
-					tb.ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
-					tb.BorderStyle = BorderStyle.FixedSingle;
-				}
-				else if (control is LinkLabel)
-				{
-					var tb = control as LinkLabel;
-					tb.LinkColor = Color.FromArgb(0x1, 0x97, 0xF6);
-					tb.ActiveLinkColor = Color.FromArgb(0xDF, 0x29, 0x35);
+					case Button btn:
+						btn.FlatStyle = FlatStyle.Flat;
+						btn.UseVisualStyleBackColor = false;
+						break;
+					case TextBox tb:
+						tb.BackColor = Color.FromArgb(0x30, 0x30, 0x30);
+						tb.ForeColor = Color.FromArgb(0xF0, 0xF0, 0xF0);
+						tb.BorderStyle = BorderStyle.FixedSingle;
+						break;
+					case LinkLabel ll:
+						ll.LinkColor = Color.FromArgb(0x1, 0x97, 0xF6);
+						ll.ActiveLinkColor = Color.FromArgb(0xDF, 0x29, 0x35);
+						break;
 				}
 			}
 		}
@@ -103,19 +103,24 @@ namespace DNSChanger
 		public static void ButtonSuccessAnimation(object sender)
 		{
 			var btn = sender as Button;
+			if (btn == null)
+				throw new ArgumentException($"Failed casting '{nameof(sender)}' to '{nameof(Button)}'", nameof(sender));
+
 			var defaultColor = btn.BackColor;
+			var animateColor = IsSystemDarkMode() ?
+				Color.FromArgb(0x10, 0x50, 0x10) :
+				Color.LightGreen;
 
-			if (IsSystemDarkMode())
-				btn.BackColor = Color.FromArgb(0x10, 0x50, 0x10);
-			else
-				btn.BackColor = Color.LightGreen;
+			if (defaultColor == animateColor)
+				return;
 
-			var thr = new Thread(() =>
+			btn.BackColor = animateColor;
+
+			new Thread(() =>
 			{
 				Thread.Sleep(600);
 				btn.BackColor = defaultColor;
-			}) {IsBackground = true};
-			thr.Start();
+			}) {IsBackground = true}.Start();
 		}
 	}
 }
