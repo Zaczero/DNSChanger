@@ -17,12 +17,12 @@ namespace DNSChanger
 
 			foreach (var dnsServer in dnsServers)
 			{
+				var results = new int[pings];
+				var address = dnsServer.DnsEntries.First().Value;
+				var success = true;
+
 				try
 				{
-					var results = new int[pings];
-					var address = dnsServer.DnsEntries.First().Value;
-					var success = true;
-
 					for (var i = 0; i < pings; i++)
 					{
 						var ping = new Ping();
@@ -38,34 +38,36 @@ namespace DNSChanger
 							break;
 						}
 					}
+				}
+				catch (Exception)
+				{
+					success = false;
+				}
+					
+				SentrySdk.AddBreadcrumb($"{nameof(Run)}: {nameof(dnsServer.Name)}={dnsServer.Name}, {nameof(success)}={success}", nameof(LatencyTester));
 
-					if (success)
+				if (success)
+				{
+					var max = results.Max();
+					var maxRemoved = false;
+					var totalMs = 0;
+
+					foreach (var result in results)
 					{
-						var max = results.Max();
-						var maxRemoved = false;
-						var totalMs = 0;
-
-						foreach (var result in results)
+						if (!maxRemoved && result == max)
 						{
-							if (!maxRemoved && result == max)
-							{
-								maxRemoved = true;
-								continue;
-							}
-
-							totalMs += result;
+							maxRemoved = true;
+							continue;
 						}
 
-						dnsServer.Latency = (float) totalMs / pings;
+						totalMs += result;
 					}
-					else
-					{
-						dnsServer.Latency = float.NaN;
-					}
+
+					dnsServer.Latency = (float) totalMs / pings;
 				}
-				catch (Exception ex)
+				else
 				{
-					SentrySdk.CaptureException(ex);
+					dnsServer.Latency = float.NaN;
 				}
 
 				LatencyUpdated?.Invoke(null, null);
