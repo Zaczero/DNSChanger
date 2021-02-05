@@ -124,7 +124,7 @@ namespace DNSChanger
 				AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
 			};
 
-			var http = new HttpClient(handler);
+			var http = new HttpClient(handler) {Timeout = TimeSpan.FromSeconds(30)};
 			var bits = Environment.Is64BitProcess ? "64" : "32";
 			byte[] buffer;
 
@@ -137,7 +137,7 @@ namespace DNSChanger
 			{
 				SentrySdk.CaptureException(ex);
 
-				statusLabel.Text = $"[!] Exception: {ex.Message}";
+				statusLabel.Text = $"[!] Error message: {ex.Message}";
 				return false;
 			}
 			
@@ -186,7 +186,7 @@ namespace DNSChanger
 			{
 				SentrySdk.CaptureException(ex);
 
-				statusLabel.Text = $"[!] Exception: {ex.Message}";
+				statusLabel.Text = $"[!] Error message: {ex.Message}";
 				return false;
 			}
 			

@@ -158,7 +158,7 @@ namespace DNSChanger
 			ResetDnsEntries(@interface, "ipv6");
 		}
 
-		public static void ResetDnsEntries(Interface @interface, string ip)
+		private static void ResetDnsEntries(Interface @interface, string ip)
 		{
 			var proc = CreateNetshProcess($"int {ip} set dns \"{@interface.Name}\" dhcp", false);
 			proc.Start();

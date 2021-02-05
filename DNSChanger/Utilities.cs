@@ -104,7 +104,7 @@ namespace DNSChanger
 		{
 			var btn = sender as Button;
 			if (btn == null)
-				throw new ArgumentException($"Failed casting '{nameof(sender)}' to '{nameof(Button)}'", nameof(sender));
+				throw new ArgumentException($"Failed to cast {nameof(sender)} to a {nameof(Button)} object.", nameof(sender));
 
 			var defaultColor = btn.BackColor;
 			var animateColor = IsSystemDarkMode() ?
@@ -121,6 +121,11 @@ namespace DNSChanger
 				Thread.Sleep(600);
 				btn.BackColor = defaultColor;
 			}) {IsBackground = true}.Start();
+		}
+
+		public static void ShowExceptionMessage(string message, Exception ex)
+		{
+			MessageBox.Show($"{message}\r\nError message: {ex.Message}", GlobalVars.Name + " - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}
 }

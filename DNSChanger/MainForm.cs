@@ -30,9 +30,20 @@ namespace DNSChanger
 			v6primaryText.TextChanged += (sender, args) => MatchInputToDnsServer();
 			v6secondaryText.TextChanged += (sender, args) => MatchInputToDnsServer();
 			LatencyTester.LatencyUpdated += (sender, args) => RefreshDnsLatency();
+
+			try
+			{
+				FillDnsCombo();
+				FillInterfacesCombo();
+			}
+			catch (Exception ex)
+			{
+				SentrySdk.CaptureException(ex);
+				// TODO: Exception messages as global variables
+				Utilities.ShowExceptionMessage("Something went wrong during DNS configuration fetch.", ex);
+				Environment.FailFast("Something went wrong during DNS configuration fetch.", ex);
+			}
 			
-			FillDnsCombo();
-			FillInterfacesCombo();
 			ActiveControl = v4primaryText;
 
 			new Task(() =>
@@ -71,12 +82,7 @@ namespace DNSChanger
 
 			// some users do not have any interfaces available
 			if (interfacesCombo.Items.Count == 0)
-			{
-				const string message = "Failed to fetch network interface list";
-
-				MessageBox.Show(message, GlobalVars.Name + " Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				throw new Exception(message);
-			}
+				throw new Exception("Failed to fetch network interface list (empty response).");
 
 			if (selectedItem != null)
 				interfacesCombo.SelectedItem = selectedItem;
@@ -269,10 +275,18 @@ namespace DNSChanger
 				if (GlobalVars.IpAddressRegex.IsMatch(dnsText))
 					dnsEntries.Add(new DNSEntry(dnsText));
 			}
-			
-			var @interface = GetSelectedInterface();
-			NetshHelper.UpdateDnsEntries(@interface, dnsEntries);
-			NetshHelper.FlushDns();
+
+			try
+			{
+				var @interface = GetSelectedInterface();
+				NetshHelper.UpdateDnsEntries(@interface, dnsEntries);
+				NetshHelper.FlushDns();
+			}
+			catch (Exception ex)
+			{
+				SentrySdk.CaptureException(ex);
+				Utilities.ShowExceptionMessage("Something went wrong during DNS configuration update.", ex);
+			}
 			
 			Utilities.ButtonSuccessAnimation(sender);
 		}
@@ -289,10 +303,18 @@ namespace DNSChanger
 		private void resetBtn_Click(object sender, EventArgs e)
 		{
 			SentrySdk.AddBreadcrumb($"{nameof(resetBtn_Click)}", nameof(MainForm));
-
-			var @interface = GetSelectedInterface();
-			NetshHelper.ResetDnsEntries(@interface);
-			NetshHelper.FlushDns();
+			
+			try
+			{
+				var @interface = GetSelectedInterface();
+				NetshHelper.ResetDnsEntries(@interface);
+				NetshHelper.FlushDns();
+			}
+			catch (Exception ex)
+			{
+				SentrySdk.CaptureException(ex);
+				Utilities.ShowExceptionMessage("Something went wrong during DNS configuration update.", ex);
+			}
 
 			InterfacesComboOnSelectedIndexChanged(interfacesCombo, null);
 
