@@ -43,10 +43,34 @@ namespace DNSChanger
 				Name = "AdGuard",
 				DnsEntries = new []
 				{
-					new DNSEntry("176.103.130.130"),
-					new DNSEntry("176.103.130.131"),
-					new DNSEntry("2a00:5a60::ad1:0ff"),
-					new DNSEntry("2a00:5a60::ad2:0ff"), 
+					new DNSEntry("94.140.14.14"),
+					new DNSEntry("94.140.15.15"),
+					new DNSEntry("2a10:50c0::ad1:ff"),
+					new DNSEntry("2a10:50c0::ad2:ff"), 
+				},
+			},
+
+			new DNSServerEntry
+			{
+				Name = "AdGuard - Family protection",
+				DnsEntries = new []
+				{
+					new DNSEntry("94.140.14.15"),
+					new DNSEntry("94.140.15.16"),
+					new DNSEntry("2a10:50c0::bad1:ff"),
+					new DNSEntry("2a10:50c0::bad2:ff"), 
+				},
+			},
+
+			new DNSServerEntry
+			{
+				Name = "AdGuard - Non filtering",
+				DnsEntries = new []
+				{
+					new DNSEntry("94.140.14.140"),
+					new DNSEntry("94.140.14.141"),
+					new DNSEntry("2a10:50c0::1:ff"),
+					new DNSEntry("2a10:50c0::2:ff"), 
 				},
 			},
 
@@ -67,10 +91,10 @@ namespace DNSChanger
 				Name = "NextDNS",
 				DnsEntries = new []
 				{
-					new DNSEntry("45.90.28.205"),
-					new DNSEntry("45.90.30.205"),
-					new DNSEntry("2a07:a8c0::1f:5db8"),
-					new DNSEntry("2a07:a8c1::1f:5db8"), 
+					new DNSEntry("45.90.28.119"),
+					new DNSEntry("45.90.30.119"),
+					new DNSEntry("2a07:a8c0::4e:9d2a"),
+					new DNSEntry("2a07:a8c1::4e:9d2a"), 
 				},
 			},
 
