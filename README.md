@@ -60,7 +60,6 @@ Finally, validate your configuration using [DNS leak test](https://www.dnsleakte
 ### 📧 Contact
 
 * Email: [kamil@monicz.pl](mailto:kamil@monicz.pl)
-* PGP: [0x9D7BC5B97BB0A707](https://gist.github.com/Zaczero/158da01bfd5b6d236f2b8ceb62dd9698)
 
 ### 📃 License
 
